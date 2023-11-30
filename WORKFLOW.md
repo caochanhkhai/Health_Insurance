@@ -3,14 +3,14 @@
 ## Giới thiệu
 Đây là mô tả về quy trình làm việc cơ bản với Git để quản lý mã nguồn trong dự án.
 
-## Bước 1: Clone Repository
+## Bước 1: Clone Repository (Chỉ thực hiện 1 lần duy nhất, những lần push code sau sẽ thực hiện từ Bước 3)
 Clone repository từ remote về local để bắt đầu làm việc.
 
 ```bash
 git clone https://github.com/caochanhkhai1510/Health_Insurance.git
 ```
 
-## Bước 2: Chuyển sang Branch của cá nhân
+## Bước 2: Chuyển sang Branch của cá nhân (Mỗi khi bắt đầu code thì nên thực hiện lại bước này)
 Chuyển sang branch cá nhân (chứa tên bản thân) để bắt đầu làm việc 
 
 ```bash
