@@ -4,6 +4,7 @@ using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(VHIDbContext))]
-    partial class VHIDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231218164624_1")]
+    partial class _1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -270,9 +273,6 @@ namespace API.Migrations
                     b.Property<DateTime>("HieuLuc")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ID_GoiBaoHiem1")
-                        .HasColumnType("int");
-
                     b.Property<int>("ID_KhachHang1")
                         .HasColumnType("int");
 
@@ -289,8 +289,6 @@ namespace API.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ID_HopDong");
-
-                    b.HasIndex("ID_GoiBaoHiem1");
 
                     b.HasIndex("ID_KhachHang1");
 
@@ -497,9 +495,6 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ID_GoiBaoHiem1")
-                        .HasColumnType("int");
-
                     b.Property<int>("ID_KhachHang1")
                         .HasColumnType("int");
 
@@ -515,8 +510,6 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID_PhieuDangKi");
-
-                    b.HasIndex("ID_GoiBaoHiem1");
 
                     b.HasIndex("ID_KhachHang1");
 
@@ -652,6 +645,9 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ID_GoiBaoHiem1")
+                        .HasColumnType("int");
+
                     b.Property<int>("ID_QLBHID")
                         .HasColumnType("int");
 
@@ -688,6 +684,8 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID_YeuCauChiTra");
+
+                    b.HasIndex("ID_GoiBaoHiem1");
 
                     b.HasIndex("ID_QLBHID");
 
@@ -761,12 +759,6 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Domain.HopDong", b =>
                 {
-                    b.HasOne("API.Domain.GoiBaoHiem", "ID_GoiBaoHiem")
-                        .WithMany()
-                        .HasForeignKey("ID_GoiBaoHiem1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("API.Domain.KhachHang", "ID_KhachHang")
                         .WithMany()
                         .HasForeignKey("ID_KhachHang1")
@@ -784,8 +776,6 @@ namespace API.Migrations
                         .HasForeignKey("ID_PhieuDangKi1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ID_GoiBaoHiem");
 
                     b.Navigation("ID_KhachHang");
 
@@ -837,19 +827,11 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Domain.PhieuDangKi", b =>
                 {
-                    b.HasOne("API.Domain.GoiBaoHiem", "ID_GoiBaoHiem")
-                        .WithMany()
-                        .HasForeignKey("ID_GoiBaoHiem1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("API.Domain.KhachHang", "ID_KhachHang")
                         .WithMany()
                         .HasForeignKey("ID_KhachHang1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ID_GoiBaoHiem");
 
                     b.Navigation("ID_KhachHang");
                 });
@@ -886,11 +868,19 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Domain.YeuCauChiTra", b =>
                 {
+                    b.HasOne("API.Domain.GoiBaoHiem", "ID_GoiBaoHiem")
+                        .WithMany()
+                        .HasForeignKey("ID_GoiBaoHiem1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("API.Domain.QuanLyBaoHiem", "ID_QLBH")
                         .WithMany()
                         .HasForeignKey("ID_QLBHID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ID_GoiBaoHiem");
 
                     b.Navigation("ID_QLBH");
                 });

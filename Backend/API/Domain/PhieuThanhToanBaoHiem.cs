@@ -10,6 +10,6 @@ namespace API.Domain
         public string HinhThucThanhToan { get; set; }
         public decimal SoTien { get; set; }
         public string TinhTrang { get; set; }
-        public int ID_HopDong { get; set; }
+        public HopDong ID_HopDong { get; set; }
     }
 }
