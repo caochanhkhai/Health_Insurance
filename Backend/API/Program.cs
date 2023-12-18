@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<VHIDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("myconnection")));
+options.UseSqlServer(builder.Configuration.GetConnectionString("VHIConnectionString")));
 
 var app = builder.Build();
 
