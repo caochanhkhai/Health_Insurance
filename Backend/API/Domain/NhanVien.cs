@@ -13,7 +13,9 @@ namespace API.Domain
 
         public string QuocTich { get; set; }
 
-        public DateTime NamSinh { get; set; }
+        public DateTime NgaySinh { get; set; }
+
+        public string CMND {  get; set; }
 
         public string SoNhaTenDuong { get; set; }
 
@@ -33,6 +35,6 @@ namespace API.Domain
 
         public string SoDienThoai { get; set; }
 
-        public TaiKhoan ID_TaiKhoan { get; set;}
+        public TaiKhoan TaiKhoan { get; set;}
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Domain
 {
@@ -13,7 +14,7 @@ namespace API.Domain
 
         public string QuocTich { get; set; }
 
-        public DateTime NamSinh { get; set; }
+        public DateTime NgaySinh { get; set; }
 
         public int ChieuCao { get; set; }
 
@@ -28,6 +29,7 @@ namespace API.Domain
         public string ThanhPho { get; set; }
 
         public string Email { get; set; }
+        public string CMND { get; set; }
 
         public string NgheNghiep { get; set; }
 
@@ -41,8 +43,8 @@ namespace API.Domain
 
         public string SoDienThoai { get; set; }
 
-        public CongTy ID_CongTy { get; set; }
+        public CongTy CongTy { get; set; }
         
-        public TaiKhoan ID_TaiKhoan { get; set; }
+        public TaiKhoan TaiKhoan { get; set; }
     }
 }

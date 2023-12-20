@@ -10,7 +10,7 @@ namespace API.DTOs
         public DateTime ThoiGianKiKet { get; set; }
         public string ToKhaiSucKhoe { get; set; }
 
-        public KhachHang ID_KhachHang { get; set; }
-        public GoiBaoHiem ID_GoiBaoHiem { get; set; }
+        public int ID_KhachHang { get; set; }
+        public int ID_GoiBaoHiem { get; set; }
     }
 }

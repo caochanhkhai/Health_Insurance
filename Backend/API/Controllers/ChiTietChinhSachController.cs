@@ -16,11 +16,11 @@ namespace API.Controllers
             this.VHIDbContext = VHIDbContext;
         }
 
-       /* [HttpGet]
-        [Route("{idGoiBaoHiem}")]
+        [HttpGet]
+        [Route("GetAllChitietchinhsach/idGoiBaoHiem")]
         public IActionResult GetChiTietChinhSachByIdGoiBaoHiem(int idGoiBaoHiem)
         {
-            string query = $"SELECT * FROM ChiTietChinhSach WHERE ID_GoiBaoHiem = {idGoiBaoHiem}";
+            string query = $"SELECT * FROM ChiTietChinhSach WHERE GoiBaoHiemID_GoiBaoHiem = {idGoiBaoHiem}";
             var cccsList = VHIDbContext.ChiTietChinhSach.FromSqlRaw(query).ToList();
 
             if (cccsList.Count == 0)
@@ -28,13 +28,11 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            Console.WriteLine("Id goi bao hiem: "+cccsList[0].ID_GoiBaoHiem);
-
             var cccsDTOList = cccsList.Select(cccs => new ChiTietChinhSachDTO
             {
                 ID = cccs.ID,
-                ID_GoiBaoHiem = cccs.ID_GoiBaoHiem,
-                ID_ChinhSach = cccs.ID_ChinhSach,
+                ID_GoiBaoHiem = cccs.GoiBaoHiemID_GoiBaoHiem,
+                ID_ChinhSach = cccs.ChinhSachID_ChinhSach,
                 STT = cccs.STT,
                 HanMucChiTra = cccs.HanMucChiTra,
                 DieuKienApDung = cccs.DieuKienApDung,
@@ -42,6 +40,6 @@ namespace API.Controllers
             }).ToList();
 
             return Ok(cccsDTOList);
-        }*/
+        }
     }
 }
