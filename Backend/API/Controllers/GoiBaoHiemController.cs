@@ -15,6 +15,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("GetAll")]
         public IActionResult GetAll()
         {
             var goiBH = VHIDbContext.GoiBaoHiem.ToList();

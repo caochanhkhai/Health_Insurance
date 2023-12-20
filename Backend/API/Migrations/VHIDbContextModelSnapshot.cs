@@ -59,17 +59,17 @@ namespace API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("ID_BenhVien1")
+                    b.Property<int>("BenhVienID_BenhVien")
                         .HasColumnType("int");
 
-                    b.Property<int>("ID_GoiBaoHiem1")
+                    b.Property<int>("GoiBaoHiemID_GoiBaoHiem")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ID_BenhVien1");
+                    b.HasIndex("BenhVienID_BenhVien");
 
-                    b.HasIndex("ID_GoiBaoHiem1");
+                    b.HasIndex("GoiBaoHiemID_GoiBaoHiem");
 
                     b.ToTable("BenhVien_GoiBaoHiem");
                 });
@@ -82,18 +82,18 @@ namespace API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<int>("ChinhSachID_ChinhSach")
+                        .HasColumnType("int");
+
                     b.Property<string>("DieuKienApDung")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("GoiBaoHiemID_GoiBaoHiem")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("HanMucChiTra")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ID_ChinhSach1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ID_GoiBaoHiem1")
-                        .HasColumnType("int");
 
                     b.Property<string>("Mota")
                         .IsRequired()
@@ -104,9 +104,9 @@ namespace API.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ID_ChinhSach1");
+                    b.HasIndex("ChinhSachID_ChinhSach");
 
-                    b.HasIndex("ID_GoiBaoHiem1");
+                    b.HasIndex("GoiBaoHiemID_GoiBaoHiem");
 
                     b.ToTable("ChiTietChinhSach");
                 });
@@ -187,13 +187,13 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ID_KhachHang1")
+                    b.Property<int>("KhachHangID_KhachHang")
                         .HasColumnType("int");
 
-                    b.Property<int>("ID_NhanVien1ID_NhanVien")
+                    b.Property<int>("NhanVien1ID_NhanVien")
                         .HasColumnType("int");
 
-                    b.Property<int>("ID_NhanVien2ID_NhanVien")
+                    b.Property<int>("NhanVien2ID_NhanVien")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ThoiGian")
@@ -205,11 +205,11 @@ namespace API.Migrations
 
                     b.HasKey("ID_YeuCauTuVan");
 
-                    b.HasIndex("ID_KhachHang1");
+                    b.HasIndex("KhachHangID_KhachHang");
 
-                    b.HasIndex("ID_NhanVien1ID_NhanVien");
+                    b.HasIndex("NhanVien1ID_NhanVien");
 
-                    b.HasIndex("ID_NhanVien2ID_NhanVien");
+                    b.HasIndex("NhanVien2ID_NhanVien");
 
                     b.ToTable("DatLichTuVan");
                 });
@@ -267,36 +267,36 @@ namespace API.Migrations
                     b.Property<decimal>("GiaTriHopDong")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("GoiBaoHiemID_GoiBaoHiem")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("HieuLuc")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ID_GoiBaoHiem1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ID_KhachHang1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ID_NhanVien1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ID_PhieuDangKi1")
+                    b.Property<int>("KhachHangID_KhachHang")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("NgayKyKet")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("NhanVienID_NhanVien")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PhieuDangKiID_PhieuDangKi")
+                        .HasColumnType("int");
 
                     b.Property<int>("ThoiHan")
                         .HasColumnType("int");
 
                     b.HasKey("ID_HopDong");
 
-                    b.HasIndex("ID_GoiBaoHiem1");
+                    b.HasIndex("GoiBaoHiemID_GoiBaoHiem");
 
-                    b.HasIndex("ID_KhachHang1");
+                    b.HasIndex("KhachHangID_KhachHang");
 
-                    b.HasIndex("ID_NhanVien1");
+                    b.HasIndex("NhanVienID_NhanVien");
 
-                    b.HasIndex("ID_PhieuDangKi1");
+                    b.HasIndex("PhieuDangKiID_PhieuDangKi");
 
                     b.ToTable("HopDong");
                 });
@@ -309,6 +309,10 @@ namespace API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID_KhachHang"));
 
+                    b.Property<string>("CMND")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("CanNang")
                         .HasColumnType("int");
 
@@ -317,6 +321,9 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ChieuCao")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CongTyID_CongTy")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -331,18 +338,12 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ID_CongTy1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ID_TaiKhoan1")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("NamSinh")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("NganHang")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("NgaySinh")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("NgheNghiep")
                         .IsRequired()
@@ -372,6 +373,9 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("TaiKhoanID_TaiKhoan")
+                        .HasColumnType("int");
+
                     b.Property<string>("ThanhPho")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -381,9 +385,9 @@ namespace API.Migrations
 
                     b.HasKey("ID_KhachHang");
 
-                    b.HasIndex("ID_CongTy1");
+                    b.HasIndex("CongTyID_CongTy");
 
-                    b.HasIndex("ID_TaiKhoan1");
+                    b.HasIndex("TaiKhoanID_TaiKhoan");
 
                     b.ToTable("KhachHang");
                 });
@@ -396,9 +400,6 @@ namespace API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("ID_YeuCauChiTra1")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("SoTienChiTra")
                         .HasColumnType("decimal(18,2)");
 
@@ -409,9 +410,12 @@ namespace API.Migrations
                     b.Property<DateTime>("ThoiGianChiTra")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("YeuCauChiTraID_YeuCauChiTra")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
-                    b.HasIndex("ID_YeuCauChiTra1");
+                    b.HasIndex("YeuCauChiTraID_YeuCauChiTra");
 
                     b.ToTable("LichSuChiTra");
                 });
@@ -423,6 +427,10 @@ namespace API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID_NhanVien"));
+
+                    b.Property<string>("CMND")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -436,19 +444,16 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ID_TaiKhoan1")
-                        .HasColumnType("int");
-
                     b.Property<string>("LoaiNhanVien")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("NamSinh")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("NganHang")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("NgaySinh")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PhuongXa")
                         .IsRequired()
@@ -474,13 +479,16 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("TaiKhoanID_TaiKhoan")
+                        .HasColumnType("int");
+
                     b.Property<string>("ThanhPho")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID_NhanVien");
 
-                    b.HasIndex("ID_TaiKhoan1");
+                    b.HasIndex("TaiKhoanID_TaiKhoan");
 
                     b.ToTable("NhanVien");
                 });
@@ -497,10 +505,10 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ID_GoiBaoHiem1")
+                    b.Property<int>("GoiBaoHiemID_GoiBaoHiem")
                         .HasColumnType("int");
 
-                    b.Property<int>("ID_KhachHang1")
+                    b.Property<int>("KhachHangID_KhachHang")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ThoiGianKiKet")
@@ -516,9 +524,9 @@ namespace API.Migrations
 
                     b.HasKey("ID_PhieuDangKi");
 
-                    b.HasIndex("ID_GoiBaoHiem1");
+                    b.HasIndex("GoiBaoHiemID_GoiBaoHiem");
 
-                    b.HasIndex("ID_KhachHang1");
+                    b.HasIndex("KhachHangID_KhachHang");
 
                     b.ToTable("PhieuDangKi");
                 });
@@ -535,7 +543,7 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ID_HopDong1")
+                    b.Property<int>("HopDongID_HopDong")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("NgayThanhToan")
@@ -544,13 +552,13 @@ namespace API.Migrations
                     b.Property<decimal>("SoTien")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("TinhTrang")
+                    b.Property<string>("TinhTrangDuyet")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID_PhieuThanhToan");
 
-                    b.HasIndex("ID_HopDong1");
+                    b.HasIndex("HopDongID_HopDong");
 
                     b.ToTable("PhieuThanhToanBaoHiem");
                 });
@@ -563,13 +571,13 @@ namespace API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<int>("GoiBaoHiemID_GoiBaoHiem")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("HanMucDaSuDung")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ID_GoiBaoHiem1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ID_KhachHang1")
+                    b.Property<int>("KhachHangID_KhachHang")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ThoiGianBatDau")
@@ -580,9 +588,9 @@ namespace API.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ID_GoiBaoHiem1");
+                    b.HasIndex("GoiBaoHiemID_GoiBaoHiem");
 
-                    b.HasIndex("ID_KhachHang1");
+                    b.HasIndex("KhachHangID_KhachHang");
 
                     b.ToTable("QuanLyBaoHiem");
                 });
@@ -652,9 +660,6 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ID_QLBHID")
-                        .HasColumnType("int");
-
                     b.Property<string>("MoiQuanHe")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -676,6 +681,9 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("QLBHID")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("SoTienYeuCauChiTra")
                         .HasColumnType("decimal(18,2)");
 
@@ -689,210 +697,210 @@ namespace API.Migrations
 
                     b.HasKey("ID_YeuCauChiTra");
 
-                    b.HasIndex("ID_QLBHID");
+                    b.HasIndex("QLBHID");
 
                     b.ToTable("YeuCauChiTra");
                 });
 
             modelBuilder.Entity("API.Domain.BenhVien_GoiBaoHiem", b =>
                 {
-                    b.HasOne("API.Domain.BenhVien", "ID_BenhVien")
+                    b.HasOne("API.Domain.BenhVien", "BenhVien")
                         .WithMany()
-                        .HasForeignKey("ID_BenhVien1")
+                        .HasForeignKey("BenhVienID_BenhVien")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Domain.GoiBaoHiem", "ID_GoiBaoHiem")
+                    b.HasOne("API.Domain.GoiBaoHiem", "GoiBaoHiem")
                         .WithMany()
-                        .HasForeignKey("ID_GoiBaoHiem1")
+                        .HasForeignKey("GoiBaoHiemID_GoiBaoHiem")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ID_BenhVien");
+                    b.Navigation("BenhVien");
 
-                    b.Navigation("ID_GoiBaoHiem");
+                    b.Navigation("GoiBaoHiem");
                 });
 
             modelBuilder.Entity("API.Domain.ChiTietChinhSach", b =>
                 {
-                    b.HasOne("API.Domain.ChinhSach", "ID_ChinhSach")
+                    b.HasOne("API.Domain.ChinhSach", "ChinhSach")
                         .WithMany()
-                        .HasForeignKey("ID_ChinhSach1")
+                        .HasForeignKey("ChinhSachID_ChinhSach")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Domain.GoiBaoHiem", "ID_GoiBaoHiem")
+                    b.HasOne("API.Domain.GoiBaoHiem", "GoiBaoHiem")
                         .WithMany()
-                        .HasForeignKey("ID_GoiBaoHiem1")
+                        .HasForeignKey("GoiBaoHiemID_GoiBaoHiem")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ID_ChinhSach");
+                    b.Navigation("ChinhSach");
 
-                    b.Navigation("ID_GoiBaoHiem");
+                    b.Navigation("GoiBaoHiem");
                 });
 
             modelBuilder.Entity("API.Domain.DatLichTuVan", b =>
                 {
-                    b.HasOne("API.Domain.KhachHang", "ID_KhachHang")
+                    b.HasOne("API.Domain.KhachHang", "KhachHang")
                         .WithMany()
-                        .HasForeignKey("ID_KhachHang1")
+                        .HasForeignKey("KhachHangID_KhachHang")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Domain.NhanVien", "ID_NhanVien1")
+                    b.HasOne("API.Domain.NhanVien", "NhanVien1")
                         .WithMany()
-                        .HasForeignKey("ID_NhanVien1ID_NhanVien")
+                        .HasForeignKey("NhanVien1ID_NhanVien")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Domain.NhanVien", "ID_NhanVien2")
+                    b.HasOne("API.Domain.NhanVien", "NhanVien2")
                         .WithMany()
-                        .HasForeignKey("ID_NhanVien2ID_NhanVien")
+                        .HasForeignKey("NhanVien2ID_NhanVien")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ID_KhachHang");
+                    b.Navigation("KhachHang");
 
-                    b.Navigation("ID_NhanVien1");
+                    b.Navigation("NhanVien1");
 
-                    b.Navigation("ID_NhanVien2");
+                    b.Navigation("NhanVien2");
                 });
 
             modelBuilder.Entity("API.Domain.HopDong", b =>
                 {
-                    b.HasOne("API.Domain.GoiBaoHiem", "ID_GoiBaoHiem")
+                    b.HasOne("API.Domain.GoiBaoHiem", "GoiBaoHiem")
                         .WithMany()
-                        .HasForeignKey("ID_GoiBaoHiem1")
+                        .HasForeignKey("GoiBaoHiemID_GoiBaoHiem")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Domain.KhachHang", "ID_KhachHang")
+                    b.HasOne("API.Domain.KhachHang", "KhachHang")
                         .WithMany()
-                        .HasForeignKey("ID_KhachHang1")
+                        .HasForeignKey("KhachHangID_KhachHang")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Domain.NhanVien", "ID_NhanVien")
+                    b.HasOne("API.Domain.NhanVien", "NhanVien")
                         .WithMany()
-                        .HasForeignKey("ID_NhanVien1")
+                        .HasForeignKey("NhanVienID_NhanVien")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Domain.PhieuDangKi", "ID_PhieuDangKi")
+                    b.HasOne("API.Domain.PhieuDangKi", "PhieuDangKi")
                         .WithMany()
-                        .HasForeignKey("ID_PhieuDangKi1")
+                        .HasForeignKey("PhieuDangKiID_PhieuDangKi")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ID_GoiBaoHiem");
+                    b.Navigation("GoiBaoHiem");
 
-                    b.Navigation("ID_KhachHang");
+                    b.Navigation("KhachHang");
 
-                    b.Navigation("ID_NhanVien");
+                    b.Navigation("NhanVien");
 
-                    b.Navigation("ID_PhieuDangKi");
+                    b.Navigation("PhieuDangKi");
                 });
 
             modelBuilder.Entity("API.Domain.KhachHang", b =>
                 {
-                    b.HasOne("API.Domain.CongTy", "ID_CongTy")
+                    b.HasOne("API.Domain.CongTy", "CongTy")
                         .WithMany()
-                        .HasForeignKey("ID_CongTy1")
+                        .HasForeignKey("CongTyID_CongTy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Domain.TaiKhoan", "ID_TaiKhoan")
+                    b.HasOne("API.Domain.TaiKhoan", "TaiKhoan")
                         .WithMany()
-                        .HasForeignKey("ID_TaiKhoan1")
+                        .HasForeignKey("TaiKhoanID_TaiKhoan")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ID_CongTy");
+                    b.Navigation("CongTy");
 
-                    b.Navigation("ID_TaiKhoan");
+                    b.Navigation("TaiKhoan");
                 });
 
             modelBuilder.Entity("API.Domain.LichSuChiTra", b =>
                 {
-                    b.HasOne("API.Domain.YeuCauChiTra", "ID_YeuCauChiTra")
+                    b.HasOne("API.Domain.YeuCauChiTra", "YeuCauChiTra")
                         .WithMany()
-                        .HasForeignKey("ID_YeuCauChiTra1")
+                        .HasForeignKey("YeuCauChiTraID_YeuCauChiTra")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ID_YeuCauChiTra");
+                    b.Navigation("YeuCauChiTra");
                 });
 
             modelBuilder.Entity("API.Domain.NhanVien", b =>
                 {
-                    b.HasOne("API.Domain.TaiKhoan", "ID_TaiKhoan")
+                    b.HasOne("API.Domain.TaiKhoan", "TaiKhoan")
                         .WithMany()
-                        .HasForeignKey("ID_TaiKhoan1")
+                        .HasForeignKey("TaiKhoanID_TaiKhoan")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ID_TaiKhoan");
+                    b.Navigation("TaiKhoan");
                 });
 
             modelBuilder.Entity("API.Domain.PhieuDangKi", b =>
                 {
-                    b.HasOne("API.Domain.GoiBaoHiem", "ID_GoiBaoHiem")
+                    b.HasOne("API.Domain.GoiBaoHiem", "GoiBaoHiem")
                         .WithMany()
-                        .HasForeignKey("ID_GoiBaoHiem1")
+                        .HasForeignKey("GoiBaoHiemID_GoiBaoHiem")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Domain.KhachHang", "ID_KhachHang")
+                    b.HasOne("API.Domain.KhachHang", "KhachHang")
                         .WithMany()
-                        .HasForeignKey("ID_KhachHang1")
+                        .HasForeignKey("KhachHangID_KhachHang")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ID_GoiBaoHiem");
+                    b.Navigation("GoiBaoHiem");
 
-                    b.Navigation("ID_KhachHang");
+                    b.Navigation("KhachHang");
                 });
 
             modelBuilder.Entity("API.Domain.PhieuThanhToanBaoHiem", b =>
                 {
-                    b.HasOne("API.Domain.HopDong", "ID_HopDong")
+                    b.HasOne("API.Domain.HopDong", "HopDong")
                         .WithMany()
-                        .HasForeignKey("ID_HopDong1")
+                        .HasForeignKey("HopDongID_HopDong")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ID_HopDong");
+                    b.Navigation("HopDong");
                 });
 
             modelBuilder.Entity("API.Domain.QuanLyBaoHiem", b =>
                 {
-                    b.HasOne("API.Domain.GoiBaoHiem", "ID_GoiBaoHiem")
+                    b.HasOne("API.Domain.GoiBaoHiem", "GoiBaoHiem")
                         .WithMany()
-                        .HasForeignKey("ID_GoiBaoHiem1")
+                        .HasForeignKey("GoiBaoHiemID_GoiBaoHiem")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Domain.KhachHang", "ID_KhachHang")
+                    b.HasOne("API.Domain.KhachHang", "KhachHang")
                         .WithMany()
-                        .HasForeignKey("ID_KhachHang1")
+                        .HasForeignKey("KhachHangID_KhachHang")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ID_GoiBaoHiem");
+                    b.Navigation("GoiBaoHiem");
 
-                    b.Navigation("ID_KhachHang");
+                    b.Navigation("KhachHang");
                 });
 
             modelBuilder.Entity("API.Domain.YeuCauChiTra", b =>
                 {
-                    b.HasOne("API.Domain.QuanLyBaoHiem", "ID_QLBH")
+                    b.HasOne("API.Domain.QuanLyBaoHiem", "QLBH")
                         .WithMany()
-                        .HasForeignKey("ID_QLBHID")
+                        .HasForeignKey("QLBHID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ID_QLBH");
+                    b.Navigation("QLBH");
                 });
 #pragma warning restore 612, 618
         }

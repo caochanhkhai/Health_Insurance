@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -21,6 +22,7 @@ namespace API.Controllers
         public IActionResult GetById(int id)
         {
             var phieudk = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == id);
+
             if (phieudk == null)
             {
                 return NotFound();
@@ -31,8 +33,8 @@ namespace API.Controllers
             phieudk_dto.DiaDiemKiKet = phieudk.DiaDiemKiKet;
             phieudk_dto.ThoiGianKiKet = phieudk.ThoiGianKiKet;
             phieudk_dto.ToKhaiSucKhoe = phieudk.ToKhaiSucKhoe;
-            phieudk_dto.ID_KhachHang = phieudk.ID_KhachHang;
-            phieudk_dto.ID_GoiBaoHiem = phieudk.ID_GoiBaoHiem;
+            phieudk_dto.ID_KhachHang = phieudk.KhachHangID_KhachHang;
+            phieudk_dto.ID_GoiBaoHiem = phieudk.GoiBaoHiemID_GoiBaoHiem;
             return Ok(phieudk_dto);
         }
     }

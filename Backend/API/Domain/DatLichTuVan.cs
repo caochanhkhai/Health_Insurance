@@ -10,10 +10,10 @@ namespace API.Domain
         public string DiaDiem { get; set; }
         public DateTime ThoiGian {  get; set; }
 
-        public KhachHang ID_KhachHang { get; set; }
+        public KhachHang KhachHang { get; set; }
         
-        public NhanVien ID_NhanVien1 { get; set; }
-        public NhanVien ID_NhanVien2 { get; set; }
+        public NhanVien NhanVien1 { get; set; }
+        public NhanVien NhanVien2 { get; set; }
     }
 }
 

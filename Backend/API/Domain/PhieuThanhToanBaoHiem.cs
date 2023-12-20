@@ -9,7 +9,7 @@ namespace API.Domain
         public DateTime NgayThanhToan { get; set; }
         public string HinhThucThanhToan { get; set; }
         public decimal SoTien { get; set; }
-        public string TinhTrang { get; set; }
-        public HopDong ID_HopDong { get; set; }
+        public string TinhTrangDuyet { get; set; }
+        public HopDong HopDong { get; set; }
     }
 }

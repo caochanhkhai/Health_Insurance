@@ -38,6 +38,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Route("DangKi")]
         public IActionResult CreateTaiKhoan([FromBody] TaiKhoanDTO dto)
         {
 

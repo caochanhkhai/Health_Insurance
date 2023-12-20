@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.Domain
 {
@@ -11,7 +12,11 @@ namespace API.Domain
         public DateTime ThoiGianKiKet { get; set; }
         public string ToKhaiSucKhoe {  get; set; }
 
-        public KhachHang ID_KhachHang { get; set; }
-        public GoiBaoHiem ID_GoiBaoHiem { get; set; }
+        public KhachHang KhachHang { get; set; }
+
+        public int KhachHangID_KhachHang { get; set; }
+        public GoiBaoHiem GoiBaoHiem { get; set; }
+
+        public int GoiBaoHiemID_GoiBaoHiem { get; set; }
     }
 }
