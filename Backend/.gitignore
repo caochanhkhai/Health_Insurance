@@ -8,9 +8,6 @@ nupkg/
 # Visual Studio Code
 .vscode/
 
-# Migrations folder history
-Migrations/
-
 # Rider
 .idea/
 
@@ -22,6 +19,10 @@ Migrations/
 
 # Code Rush
 .cr/
+
+# App Settings
+appsettings.json
+appsettings.Development.json
 
 # User-specific files
 *.suo
