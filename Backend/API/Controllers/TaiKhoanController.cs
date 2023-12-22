@@ -20,7 +20,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("id:int")]
+        [Route("id")]
         public IActionResult GetById(int id)
         {
             var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == id);
@@ -67,14 +67,11 @@ namespace API.Controllers
         [Route("DangNhap(TenDangNhap:string,MatKhau:string)")]
         public IActionResult DangNhap(string tenDN,string MK)
         {
-            string mk = HashPassword(MK);
-            string query = $"SELECT * FROM TaiKhoan WHERE TenDangNhap = '{tenDN}' and MatKhau =  '{mk}'";
-            var TKList = VHIDbContext.TaiKhoan.FromSqlRaw(query).ToList();
-            if (TKList == null)
+            var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.TenDangNhap == tenDN && x.MatKhau == HashPassword(MK));
+            if (tk == null)
             {
                 return NotFound();
             }
-            var tk = TKList[0];
             var tk_dto = new TaiKhoanDTO();
             tk_dto.ID_TaiKhoan = tk.ID_TaiKhoan;
             tk_dto.TenDangNhap = tk.TenDangNhap;

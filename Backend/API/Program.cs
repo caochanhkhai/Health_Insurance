@@ -1,4 +1,6 @@
+using API;
 using API.Data;
+using MailKit;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
