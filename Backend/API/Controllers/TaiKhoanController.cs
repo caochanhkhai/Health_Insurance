@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.Domain;
 using API.DTOs;
+using API.MiddleWare;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -72,13 +73,22 @@ namespace API.Controllers
             {
                 return NotFound();
             }
+            var jwtService = new JwtService("vhihealthinsurance");
+            var accessToken = jwtService.GenerateToken(tk.ID_TaiKhoan.ToString(), tk.TenDangNhap, 10);
+
             var tk_dto = new TaiKhoanDTO();
             tk_dto.ID_TaiKhoan = tk.ID_TaiKhoan;
             tk_dto.TenDangNhap = tk.TenDangNhap;
-            tk_dto.MatKhau = tk.MatKhau;
+            tk_dto.MatKhau = "";
             tk_dto.LoaiTaiKhoan = tk.LoaiTaiKhoan;
             tk_dto.TinhTrang = tk.TinhTrang;
-            return Ok(tk_dto);
+
+            var response = new
+            {
+                AccessToken = accessToken,
+                TaiKhoan = tk_dto
+            };
+            return Ok(response);
         }
 
         private string HashPassword(string password)
