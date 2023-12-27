@@ -18,23 +18,26 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("id:int")]
-        public IActionResult GetById(int id)
+        [Route("userId:int")]
+        public IActionResult GetById(int userId)
         {
-            var phieudk = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == id);
+            var phieudk = VHIDbContext.PhieuDangKi.Where(x => x.KhachHangID_KhachHang == userId).ToList();
 
             if (phieudk == null)
             {
                 return NotFound();
             }
-            var phieudk_dto = new PhieuDangKiDTO();
-            phieudk_dto.ID_PhieuDangKi = phieudk.ID_PhieuDangKi;
-            phieudk_dto.TinhTrangDuyet = phieudk.TinhTrangDuyet;
-            phieudk_dto.DiaDiemKiKet = phieudk.DiaDiemKiKet;
-            phieudk_dto.ThoiGianKiKet = phieudk.ThoiGianKiKet;
-            phieudk_dto.ToKhaiSucKhoe = phieudk.ToKhaiSucKhoe;
-            phieudk_dto.ID_KhachHang = phieudk.KhachHangID_KhachHang;
-            phieudk_dto.ID_GoiBaoHiem = phieudk.GoiBaoHiemID_GoiBaoHiem;
+
+            var phieudk_dto = phieudk.Select(phieudk => new PhieuDangKiDTO
+                { 
+            ID_PhieuDangKi = phieudk.ID_PhieuDangKi,
+            TinhTrangDuyet = phieudk.TinhTrangDuyet,
+            DiaDiemKiKet = phieudk.DiaDiemKiKet,
+            ThoiGianKiKet = phieudk.ThoiGianKiKet,
+            ToKhaiSucKhoe = phieudk.ToKhaiSucKhoe,
+            ID_KhachHang = phieudk.KhachHangID_KhachHang,
+            ID_GoiBaoHiem = phieudk.GoiBaoHiemID_GoiBaoHiem,
+        }).ToList();
             return Ok(phieudk_dto);
         }
     }
