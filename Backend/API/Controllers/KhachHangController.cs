@@ -1,6 +1,9 @@
 ﻿using API.Data;
 using API.Domain;
 using API.DTOs;
+using API.Helper;
+using API.MiddleWare;
+using API.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +14,12 @@ namespace API.Controllers
     public class KhachHangController : ControllerBase
     {
         private readonly VHIDbContext VHIDbContext;
+        private readonly IEmailService emailService;
 
-        public KhachHangController(VHIDbContext VHIDbContext)
+        public KhachHangController(VHIDbContext VHIDbContext, IEmailService emailService)
         {
             this.VHIDbContext = VHIDbContext;
+            this.emailService = emailService;
         }
 
         [HttpGet]
@@ -55,11 +60,22 @@ namespace API.Controllers
             VHIDbContext.KhachHang.Add(KhachHangDomain);
             VHIDbContext.SaveChanges();
             KhachHangDTO kh_dto = CreateKHDTO(KhachHangDomain,0, taiKhoan.ID_TaiKhoan);
+            //Gửi email cho khách hàng
+            var jwtService = new JwtService("vhihealthinsurance");
+            var accessToken = jwtService.GenerateToken(KhachHangDomain.ID_KhachHang.ToString(), "", 10);
+            Mailrequest mailrequest = new Mailrequest()
+            {
+                ToEmail = KhachHangDomain.Email,
+                Subject = "Xác thực tài khoản Bảo hiểm sức khỏe VHI",
+                Body = $"<div>Để xác thực tài khoản của bạn trên trang web Bảo hiểm sức khỏe VHI, vui lòng click vào đường dẫn sau đây: <a href=\"https://localhost:8081/VerifyEmail?accessToken={accessToken}\">Link</a></div>"
+            };
+            emailService.SendEmailAsync(mailrequest);
+
             return Ok(kh_dto);
         }
 
         [HttpPut]
-        [Route("UpdateKhachHang(id)")]
+        [Route("UpdateThongTinCaNhanKhachHang(id)")]
         public IActionResult UpdateKhachHang(int id, [FromBody] KhachHangDTO dto)
         {
             var khDomain = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == id);
@@ -68,6 +84,45 @@ namespace API.Controllers
                 return NotFound();
             }
             UpdateKhachHangDomainByDTO(dto, khDomain);
+
+            VHIDbContext.SaveChanges();
+            KhachHangDTO kh_dto = CreateKHDTO(khDomain, khDomain.CongTyID_CongTy, khDomain.TaiKhoanID_TaiKhoan);
+            return Ok(kh_dto);
+        }
+
+        [HttpPut]
+        [Route("UpdateCongTyKhachHang(idkh,idct)")]
+        public IActionResult UpdateKhachHang_CongTy(int idkh,int idct)
+        {
+            var khDomain = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == idkh);
+            var ctDomain = VHIDbContext.CongTy.FirstOrDefault(x => x.ID_CongTy == idct);
+            if (khDomain == null)
+            {
+                return NotFound("Khong ton tai khach hang!");
+            }
+            if (ctDomain == null)
+            {
+                return NotFound("Khong ton tai cong ty!");
+            }
+
+            khDomain.CongTy = ctDomain;
+
+            VHIDbContext.SaveChanges();
+            KhachHangDTO kh_dto = CreateKHDTO(khDomain, khDomain.CongTyID_CongTy, khDomain.TaiKhoanID_TaiKhoan);
+            return Ok(kh_dto);
+        }
+
+        [HttpPut]
+        [Route("XacThucKhachHang(idkh)")]
+        public IActionResult UpdateKhachHang_XacThuc(int idkh)
+        {
+            var khDomain = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == idkh);
+            if (khDomain == null)
+            {
+                return NotFound("Khong ton tai khach hang!");
+            }
+
+            khDomain.XacThuc = "Đã Xác Thực";
 
             VHIDbContext.SaveChanges();
             KhachHangDTO kh_dto = CreateKHDTO(khDomain, khDomain.CongTyID_CongTy, khDomain.TaiKhoanID_TaiKhoan);
@@ -97,7 +152,8 @@ namespace API.Controllers
                 NganHang = dto.NganHang,
                 SoDienThoai = dto.SoDienThoai,
                 CongTy = congTy,
-                TaiKhoan = taiKhoan
+                TaiKhoan = taiKhoan,
+                XacThuc = "Chưa Xác Thực"
             };
         }
         private static KhachHangDTO CreateKHDTO(KhachHang KhachHangDomain, int idcty, int idtk)
@@ -126,7 +182,8 @@ namespace API.Controllers
                     NganHang = KhachHangDomain.NganHang,
                     SoDienThoai = KhachHangDomain.SoDienThoai,
                     ID_CongTy = KhachHangDomain.CongTy.ID_CongTy,
-                    ID_TaiKhoan = KhachHangDomain.TaiKhoan.ID_TaiKhoan
+                    ID_TaiKhoan = KhachHangDomain.TaiKhoan.ID_TaiKhoan,
+                    XacThuc = KhachHangDomain.XacThuc
                 };
             }
             else
@@ -153,7 +210,8 @@ namespace API.Controllers
                     NganHang = KhachHangDomain.NganHang,
                     SoDienThoai = KhachHangDomain.SoDienThoai,
                     ID_CongTy = KhachHangDomain.CongTyID_CongTy,
-                    ID_TaiKhoan = KhachHangDomain.TaiKhoanID_TaiKhoan
+                    ID_TaiKhoan = KhachHangDomain.TaiKhoanID_TaiKhoan,
+                    XacThuc = KhachHangDomain.XacThuc
                 };
             }
         }

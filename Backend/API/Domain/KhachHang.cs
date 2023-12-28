@@ -49,5 +49,6 @@ namespace API.Domain
 
         public int CongTyID_CongTy { get; set; }
         public int TaiKhoanID_TaiKhoan { get; set; }
+        public string XacThuc { get; set; }
     }
 }

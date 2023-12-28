@@ -10,5 +10,6 @@
         public string MoTa { get; set; }
         public DateTime NgayPhatHanh { get; set; }
         public string TinhTrang { get; set; }
+        public string HinhAnh { get; set; }
     }
 }

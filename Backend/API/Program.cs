@@ -1,5 +1,7 @@
 using API;
 using API.Data;
+using API.Helper;
+using API.Service;
 using MailKit;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +15,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<VHIDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("VHIConnectionString")));
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 var app = builder.Build();
 

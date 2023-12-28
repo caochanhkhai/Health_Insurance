@@ -225,6 +225,10 @@ namespace API.Migrations
                     b.Property<decimal>("GiaTien")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("HinhAnh")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("MoTa")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -383,6 +387,10 @@ namespace API.Migrations
                     b.Property<decimal>("ThuNhap")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("XacThuc")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID_KhachHang");
 
                     b.HasIndex("CongTyID_CongTy");
@@ -511,6 +519,9 @@ namespace API.Migrations
                     b.Property<int>("KhachHangID_KhachHang")
                         .HasColumnType("int");
 
+                    b.Property<int>("NhanVienID_NhanVien")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("ThoiGianKiKet")
                         .HasColumnType("datetime2");
 
@@ -527,6 +538,8 @@ namespace API.Migrations
                     b.HasIndex("GoiBaoHiemID_GoiBaoHiem");
 
                     b.HasIndex("KhachHangID_KhachHang");
+
+                    b.HasIndex("NhanVienID_NhanVien");
 
                     b.ToTable("PhieuDangKi");
                 });
@@ -857,9 +870,17 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("API.Domain.NhanVien", "NhanVien")
+                        .WithMany()
+                        .HasForeignKey("NhanVienID_NhanVien")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("GoiBaoHiem");
 
                     b.Navigation("KhachHang");
+
+                    b.Navigation("NhanVien");
                 });
 
             modelBuilder.Entity("API.Domain.PhieuThanhToanBaoHiem", b =>

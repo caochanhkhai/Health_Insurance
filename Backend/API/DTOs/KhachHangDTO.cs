@@ -44,5 +44,7 @@ namespace API.DTOs
         public int ID_CongTy { get; set; }
 
         public int ID_TaiKhoan { get; set; }
+        public string XacThuc { get; set; }
+
     }
 }

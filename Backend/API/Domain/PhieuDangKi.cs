@@ -18,5 +18,7 @@ namespace API.Domain
         public GoiBaoHiem GoiBaoHiem { get; set; }
 
         public int GoiBaoHiemID_GoiBaoHiem { get; set; }
+        public NhanVien NhanVien { get; set; }
+        public int NhanVienID_NhanVien { get; set; }
     }
 }

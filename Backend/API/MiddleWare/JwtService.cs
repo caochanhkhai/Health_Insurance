@@ -33,5 +33,6 @@ namespace API.MiddleWare
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

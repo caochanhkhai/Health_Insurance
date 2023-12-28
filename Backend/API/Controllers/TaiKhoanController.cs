@@ -21,6 +21,27 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("GetAll")]
+        public IActionResult GetAll()
+        {
+            var dstk = VHIDbContext.TaiKhoan.ToList();
+            List<TaiKhoanDTO> dstkDTO = new List<TaiKhoanDTO>();
+            foreach (var tk in dstk)
+            {
+                TaiKhoanDTO tk_dto = new TaiKhoanDTO()
+                {
+                    ID_TaiKhoan = tk.ID_TaiKhoan,
+                    TenDangNhap = tk.TenDangNhap,
+                    MatKhau = "",
+                    LoaiTaiKhoan = tk.LoaiTaiKhoan,
+                    TinhTrang = tk.TinhTrang
+                };
+                dstkDTO.Add(tk_dto);
+            }
+            return Ok(dstkDTO);
+        }
+
+        [HttpGet]
         [Route("id")]
         public IActionResult GetById(int id)
         {
@@ -74,7 +95,7 @@ namespace API.Controllers
                 return NotFound();
             }
             var jwtService = new JwtService("vhihealthinsurance");
-            var accessToken = jwtService.GenerateToken(tk.ID_TaiKhoan.ToString(), tk.TenDangNhap, 10);
+            var accessToken = jwtService.GenerateToken(tk.ID_TaiKhoan.ToString(), tk.TenDangNhap, 120);
 
             var tk_dto = new TaiKhoanDTO();
             tk_dto.ID_TaiKhoan = tk.ID_TaiKhoan;

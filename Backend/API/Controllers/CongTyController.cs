@@ -16,16 +16,30 @@ namespace API.Controllers
             this.VHIDbContext = VHIDbContext;
         }
 
+        [HttpGet]
+        [Route("GetAll")]
+        public IActionResult GetAll()
+        {
+            var dsct = VHIDbContext.CongTy.ToList();
+            List<CongTyDTO> dsctDTO = new List<CongTyDTO>();
+            foreach (var cty in dsct)
+            {
+               CongTyDTO ctdto = CreateCongTyDTO(cty);
+               dsctDTO.Add(ctdto);
+            }
+            return Ok(dsctDTO);
+        }
+
         [HttpPost]
-        [Route("ThemCongTyChoKH")]
-        public IActionResult CreateCongTy(int id, [FromBody] CongTyDTO dto)
+        [Route("ThemCongTy(New)ChoKH")]
+        public IActionResult CreateNewCongTy(int idkh, [FromBody] CongTyDTO dto)
         {
             CongTy CongTyDomain = CreateCongTyDomain(dto);
             VHIDbContext.CongTy.Add(CongTyDomain);
             VHIDbContext.SaveChanges();
             CongTyDTO cty_dto = CreateCongTyDTO(CongTyDomain);
 
-            var khDomain = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == id);
+            var khDomain = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == idkh);
             if (khDomain == null)
             {
                 return NotFound();
