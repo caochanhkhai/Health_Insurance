@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿/* using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using API.Data;
 using API.DTOs;
@@ -20,40 +20,40 @@ namespace API.Controllers
         [HttpGet("{id:int}")]
         public IActionResult GetById(int id)
         {
-            var datLichTuVan = VHIDbContext.DatLichTuVan.FirstOrDefault(a => a.ID_YeuCauTuVan == id);
-            if (datLichTuVan == null)
+            var datLichKyHD = VHIDbContext.PhieuDangKi.FirstOrDefault(a => a.ID_PhieuDangKi == id);
+            if (datLichKyHD == null)
             {
                 return NotFound();
             }
 
-            var DatLichTuVanDto = new DatLichTuVanDTO
+            var datLichKyHDDto = new PhieuDangKiDTO
             {
-                ID_YeuCauTuVan = datLichTuVan.ID_YeuCauTuVan,
-                TinhTrangDuyet = datLichTuVan.TinhTrangDuyet,
-                DiaDiem = datLichTuVan.DiaDiem,
-                ThoiGian = datLichTuVan.ThoiGian,
-//                KhachHangID_KhachHang = datLichTuVan.KhachHangID_KhachHang,
-//                NhanVien1ID_NhanVien = datLichTuVan.NhanVien1ID_NhanVien,
-//                NhanVien2ID_NhanVien = datLichTuVan.NhanVien2ID_NhanVien,
+                ID_PhieuDangKi = datLichKyHD.ID_PhieuDangKi, 
+                TinhTrangDuyet = datLichKyHD.TinhTrangDuyet,
+                DiaDiemKiKet = datLichKyHD.DiaDiemKiKet,
+                ThoiGianKiKet = datLichKyHD.ThoiGianKiKet,
+                ID_KhachHang = datLichKyHD.KhachHangID_KhachHang,
+                ID_GoiBaoHiem = datLichKyHD.GoiBaoHiemID_GoiBaoHiem,
+                ID_NhanVien = datLichKyHD.NhanVienID_NhanVien
             };
 
-            return Ok(DatLichTuVanDto);
+            return Ok(datLichKyHDDto);
         }
 
         [HttpPost]
-        public IActionResult CreateAppointment([FromBody] DatLichTuVanDTO dto)
+        public IActionResult CreateAppointment([FromBody] PhieuDangKiDTO dto)
         {
-            var dLichTuVan = new DatLichTuVan
+            var dLichKyHD = new PhieuDangKi
             {
                 TinhTrangDuyet = dto.TinhTrangDuyet,
-                DiaDiem = dto.DiaDiem,
-                ThoiGian = dto.ThoiGian,
-//                KhachHangID_KhachHang = dto.KhachHangID_KhachHang,
-//                NhanVien1ID_NhanVien = dto.NhanVien1ID_NhanVien,
-//                NhanVien2ID_NhanVien = dto.NhanVien2ID_NhanVien,
+                DiaDiemKiKet = dto.DiaDiemKiKet,
+                ThoiGianKiKet = dto.ThoiGianKiKet,
+                ID_KhachHang = dto.KhachHangID_KhachHang,
+                ID_GoiBaoHiem = dto.GoiBaoHiemID_GoiBaoHiem,
+                ID_NhanVien = dto.NhanVienID_NhanVien
             };
 
-            VHIDbContext.DatLichTuVan.Add(dLichTuVan);
+            VHIDbContext.PhieuDangKi.Add(dLichKyHD);
             VHIDbContext.SaveChanges();
 
             var createdDatLichTuVan = new DatLichTuVanDTO
@@ -71,3 +71,4 @@ namespace API.Controllers
         }
     }
 }
+*/
