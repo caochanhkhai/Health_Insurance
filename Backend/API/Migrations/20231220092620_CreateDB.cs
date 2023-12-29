@@ -240,8 +240,7 @@ namespace API.Migrations
                     ThoiGianKiKet = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ToKhaiSucKhoe = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     KhachHangID_KhachHang = table.Column<int>(type: "int", nullable: false),
-                    GoiBaoHiemID_GoiBaoHiem = table.Column<int>(type: "int", nullable: false),
-                    NhanVienID_NhanVien = table.Column<int>(type: "int", nullable: false)
+                    GoiBaoHiemID_GoiBaoHiem = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -257,12 +256,6 @@ namespace API.Migrations
                         column: x => x.KhachHangID_KhachHang,
                         principalTable: "KhachHang",
                         principalColumn: "ID_KhachHang",
-                        onDelete: ReferentialAction.NoAction);
-                    table.ForeignKey(
-                        name: "FK_PhieuDangKi_NhanVien_NhanVienID_NhanVien",
-                        column: x => x.NhanVienID_NhanVien,
-                        principalTable: "NhanVien",
-                        principalColumn: "ID_NhanVien",
                         onDelete: ReferentialAction.NoAction);
                 });
 
@@ -540,11 +533,6 @@ namespace API.Migrations
                 name: "IX_PhieuDangKi_KhachHangID_KhachHang",
                 table: "PhieuDangKi",
                 column: "KhachHangID_KhachHang");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PhieuDangKi_NhanVienID_NhanVien",
-                table: "PhieuDangKi",
-                column: "NhanVienID_NhanVien");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PhieuThanhToanBaoHiem_HopDongID_HopDong",
