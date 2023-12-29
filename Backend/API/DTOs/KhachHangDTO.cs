@@ -1,11 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using System.ComponentModel.DataAnnotations;
+﻿using API.Domain;
 
-namespace API.Domain
+namespace API.DTOs
 {
-    public class KhachHang
+    public class KhachHangDTO
     {
-        [Key]
         public int ID_KhachHang { get; set; }
 
         public string HoTen { get; set; }
@@ -43,12 +41,10 @@ namespace API.Domain
 
         public string SoDienThoai { get; set; }
 
-        public CongTy CongTy { get; set; }
-        
-        public TaiKhoan TaiKhoan { get; set; }
+        public int ID_CongTy { get; set; }
 
-        public int CongTyID_CongTy { get; set; }
-        public int TaiKhoanID_TaiKhoan { get; set; }
+        public int ID_TaiKhoan { get; set; }
         public string XacThuc { get; set; }
+
     }
 }

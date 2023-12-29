@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.Domain;
 using API.DTOs;
+using API.MiddleWare;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -20,7 +21,28 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("id:int")]
+        [Route("GetAll")]
+        public IActionResult GetAll()
+        {
+            var dstk = VHIDbContext.TaiKhoan.ToList();
+            List<TaiKhoanDTO> dstkDTO = new List<TaiKhoanDTO>();
+            foreach (var tk in dstk)
+            {
+                TaiKhoanDTO tk_dto = new TaiKhoanDTO()
+                {
+                    ID_TaiKhoan = tk.ID_TaiKhoan,
+                    TenDangNhap = tk.TenDangNhap,
+                    MatKhau = "",
+                    LoaiTaiKhoan = tk.LoaiTaiKhoan,
+                    TinhTrang = tk.TinhTrang
+                };
+                dstkDTO.Add(tk_dto);
+            }
+            return Ok(dstkDTO);
+        }
+
+        [HttpGet]
+        [Route("id")]
         public IActionResult GetById(int id)
         {
             var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == id);
@@ -67,21 +89,27 @@ namespace API.Controllers
         [Route("DangNhap(TenDangNhap:string,MatKhau:string)")]
         public IActionResult DangNhap(string tenDN,string MK)
         {
-            string mk = HashPassword(MK);
-            string query = $"SELECT * FROM TaiKhoan WHERE TenDangNhap = '{tenDN}' and MatKhau =  '{mk}'";
-            var TKList = VHIDbContext.TaiKhoan.FromSqlRaw(query).ToList();
-            if (TKList == null)
+            var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.TenDangNhap == tenDN && x.MatKhau == HashPassword(MK));
+            if (tk == null)
             {
                 return NotFound();
             }
-            var tk = TKList[0];
+            var jwtService = new JwtService("vhihealthinsurance");
+            var accessToken = jwtService.GenerateToken(tk.ID_TaiKhoan.ToString(), tk.TenDangNhap, 120);
+
             var tk_dto = new TaiKhoanDTO();
             tk_dto.ID_TaiKhoan = tk.ID_TaiKhoan;
             tk_dto.TenDangNhap = tk.TenDangNhap;
-            tk_dto.MatKhau = tk.MatKhau;
+            tk_dto.MatKhau = "";
             tk_dto.LoaiTaiKhoan = tk.LoaiTaiKhoan;
             tk_dto.TinhTrang = tk.TinhTrang;
-            return Ok(tk_dto);
+
+            var response = new
+            {
+                AccessToken = accessToken,
+                TaiKhoan = tk_dto
+            };
+            return Ok(response);
         }
 
         private string HashPassword(string password)
