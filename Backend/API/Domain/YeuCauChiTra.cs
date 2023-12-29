@@ -7,7 +7,9 @@ namespace API.Domain
         [Key] // Sử dụng Data Annotation [Key]
         public int ID_YeuCauChiTra { get; set; }
         public QuanLyBaoHiem QLBH { get; set; }
-        public string NguoiYeuCau {  get; set; }
+        public int QLBHID { get; set; }
+
+        public string NguoiYeuCau { get; set; }
         public string DiaChi { get; set; }
         public string DienThoai { get; set; }
         public string Email { get; set; }

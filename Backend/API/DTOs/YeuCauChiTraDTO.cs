@@ -5,8 +5,8 @@ namespace API.DTOs
     public class YeuCauChiTraDTO
     {
         public int ID_YeuCauChiTra { get; set; }
-        public int ID_KhachHang { get; set; }
-        public GoiBaoHiem ID_GoiBaoHiem { get; set; }
+        public int QLBHID { get; set; }
+
         public string NguoiYeuCau { get; set; }
         public string DiaChi { get; set; }
         public string DienThoai { get; set; }
