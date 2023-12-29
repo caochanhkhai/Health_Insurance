@@ -7,8 +7,35 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="BenhVienDTO.cs" />
+    <Compile Remove="BenhVien_GoiBaoHiemDTO.cs" />
+    <Compile Remove="ChinhSachDTO.cs" />
+    <Compile Remove="ChiTietChinhSachDTO.cs" />
+    <Compile Remove="GoiBaoHiemDTO.cs" />
+    <Compile Remove="LichSuChiTraDTO.cs" />
+    <Compile Remove="PhieuThanhToanBaoHiemDTO.cs" />
+    <Compile Remove="QuanLyBaoHiemDTO.cs" />
+    <Compile Remove="YeuCauChiTraDTO.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Domain\BenhVien_GoiBaoHiem.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>
