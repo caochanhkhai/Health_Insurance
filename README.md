@@ -11,11 +11,11 @@ Nhóm quản lý dự án theo mô hình **Scrum (Agile)**, dưới sự hướn
 ### Front-end
 - Ngô Lê Hưng Thịnh
 - Lê Đào Thảo Tiên
-- Cao Chánh Khải (Hỗ trợ)
+- Cao Chánh Khải 
 ### Back-end
 - Châu Nhật Tuyết
 - Lương Văn Nam
-- Cao Chánh Khải
+- Cao Chánh Khải (Hỗ trợ)
 
 ## Tech stack
 Nhóm sử dụng **React(JS)** cho **Front-end**, **.NET Core 7** cho **Back-end** (Thiết kế và phát triển theo **Pattern MVC**)
