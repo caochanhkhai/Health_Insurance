@@ -88,9 +88,7 @@ namespace API.Controllers
                 ThoiGianKiKet = dto.ThoiGianKiKet,
                 ToKhaiSucKhoe = dto.ToKhaiSucKhoe,
                 KhachHang = kh,
-                GoiBaoHiem = gbh,
-                NhanVien = null
- 
+                GoiBaoHiem = gbh
             };
 
             VHIDbContext.PhieuDangKi.Add(PDKdomain);
@@ -138,7 +136,42 @@ namespace API.Controllers
             return Ok(phieudk_dto);
         }
 
+        [HttpPut("ThemNhanVienChoPhieuDangKi")]
+        public IActionResult ThemNhanVienChoPhieuDangKi(int idpdk, int idnv)
+        {
+            var phieuDangKi = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == idpdk);
+            var nhanVien = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == idnv);
 
+            if (phieuDangKi == null)
+            {
+                return NotFound("Không tìm thấy phiếu đăng ký.");
+            }
+            if (nhanVien == null)
+            {
+                return NotFound("Không tìm thấy nhân viên.");
+            }
 
+            // Cập nhật nhân viên và lưu vào cơ sở dữ liệu
+            phieuDangKi.NhanVien = nhanVien;
+            VHIDbContext.SaveChanges();
+            PhieuDangKiDTO phieudk_dto = CreatePhieuDKDTO(phieuDangKi);
+
+            return Ok(phieudk_dto);
+        }
+
+        private static PhieuDangKiDTO CreatePhieuDKDTO(PhieuDangKi? phieuDangKiDomain)
+        {
+            return new PhieuDangKiDTO
+            {
+                ID_PhieuDangKi = phieuDangKiDomain.ID_PhieuDangKi,
+                TinhTrangDuyet = phieuDangKiDomain.TinhTrangDuyet,
+                DiaDiemKiKet = phieuDangKiDomain.DiaDiemKiKet,
+                ThoiGianKiKet = phieuDangKiDomain.ThoiGianKiKet,
+                ToKhaiSucKhoe = phieuDangKiDomain.ToKhaiSucKhoe,
+                ID_KhachHang = phieuDangKiDomain.KhachHangID_KhachHang,
+                ID_GoiBaoHiem = phieuDangKiDomain.GoiBaoHiemID_GoiBaoHiem,
+                ID_NhanVien = phieuDangKiDomain.NhanVienID_NhanVien
+            };
+        }
     }
 }

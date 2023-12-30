@@ -14,11 +14,11 @@ namespace API.Domain
         public int KhachHangID_KhachHang { get; set; }
 
 
-        public NhanVien NhanVien1 { get; set; }
-        public int NhanVien1ID_NhanVien { get; set; }
+        public NhanVien? NhanVien1 { get; set; }
+        public int? NhanVien1ID_NhanVien { get; set; }
 
-        public NhanVien NhanVien2 { get; set; }
-        public int NhanVien2ID_NhanVien { get; set; }
+        public NhanVien? NhanVien2 { get; set; }
+        public int? NhanVien2ID_NhanVien { get; set; }
 
     }
 }

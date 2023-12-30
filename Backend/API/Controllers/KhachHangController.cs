@@ -53,10 +53,8 @@ namespace API.Controllers
         [Route("ThemKhachHang")]
         public IActionResult CreateKhachHang([FromBody] KhachHangDTO dto, int idtk)
         {
-            //CongTy ID = 1 là  đối tượng có giá trị ảo
-            var congTy = VHIDbContext.CongTy.FirstOrDefault(b => b.ID_CongTy == 1);
             var taiKhoan = VHIDbContext.TaiKhoan.FirstOrDefault(b => b.ID_TaiKhoan == idtk);
-            KhachHang KhachHangDomain = CreateKHDomain(dto, congTy, taiKhoan);
+            KhachHang KhachHangDomain = CreateKHDomain(dto, taiKhoan);
             VHIDbContext.KhachHang.Add(KhachHangDomain);
             VHIDbContext.SaveChanges();
             KhachHangDTO kh_dto = CreateKHDTO(KhachHangDomain,0, taiKhoan.ID_TaiKhoan);
@@ -125,11 +123,11 @@ namespace API.Controllers
             khDomain.XacThuc = "Đã Xác Thực";
 
             VHIDbContext.SaveChanges();
-            KhachHangDTO kh_dto = CreateKHDTO(khDomain, khDomain.CongTyID_CongTy, khDomain.TaiKhoanID_TaiKhoan);
+            KhachHangDTO kh_dto = CreateKHDTO(khDomain, 0, khDomain.TaiKhoanID_TaiKhoan);
             return Ok(kh_dto);
         }
 
-        private static KhachHang CreateKHDomain(KhachHangDTO dto, CongTy? congTy, TaiKhoan? taiKhoan)
+        private static KhachHang CreateKHDomain(KhachHangDTO dto,  TaiKhoan? taiKhoan)
         {
             return new KhachHang()
             {
@@ -151,12 +149,11 @@ namespace API.Controllers
                 SoTaiKhoan = dto.SoTaiKhoan,
                 NganHang = dto.NganHang,
                 SoDienThoai = dto.SoDienThoai,
-                CongTy = congTy,
                 TaiKhoan = taiKhoan,
                 XacThuc = "Chưa Xác Thực"
             };
         }
-        private static KhachHangDTO CreateKHDTO(KhachHang KhachHangDomain, int idcty, int idtk)
+        private static KhachHangDTO CreateKHDTO(KhachHang KhachHangDomain, int? idcty, int idtk)
         {
             if (idcty == 0)
             {
@@ -181,7 +178,6 @@ namespace API.Controllers
                     SoTaiKhoan = KhachHangDomain.SoTaiKhoan,
                     NganHang = KhachHangDomain.NganHang,
                     SoDienThoai = KhachHangDomain.SoDienThoai,
-                    ID_CongTy = KhachHangDomain.CongTy.ID_CongTy,
                     ID_TaiKhoan = KhachHangDomain.TaiKhoan.ID_TaiKhoan,
                     XacThuc = KhachHangDomain.XacThuc
                 };

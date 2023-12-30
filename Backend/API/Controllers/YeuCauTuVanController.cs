@@ -24,16 +24,7 @@ namespace API.Controllers
             List<DatLichTuVanDTO> dltvDTO = new List<DatLichTuVanDTO>();
             foreach (var dltv_domain in dltv)
             {
-                DatLichTuVanDTO dltv_dto = new DatLichTuVanDTO()
-                {
-                    ID_YeuCauTuVan = dltv_domain.ID_YeuCauTuVan,
-                    TinhTrangDuyet = dltv_domain.TinhTrangDuyet,
-                    DiaDiem = dltv_domain.DiaDiem,
-                    ThoiGian = dltv_domain.ThoiGian,
-                    ID_KhachHang = dltv_domain.KhachHangID_KhachHang,
-                    ID_NhanVien1 = dltv_domain.NhanVien1ID_NhanVien,
-                    ID_NhanVien2 = dltv_domain.NhanVien2ID_NhanVien
-                };
+                DatLichTuVanDTO dltv_dto = CreateDLTVDTO(dltv_domain);
                 dltvDTO.Add(dltv_dto);
             }
             return Ok(dltvDTO);
@@ -48,75 +39,119 @@ namespace API.Controllers
             {
                 return NotFound();
             }
-            var yctv_dto = new DatLichTuVanDTO();
-            yctv_dto.ID_YeuCauTuVan = yctv.ID_YeuCauTuVan;
-            yctv_dto.TinhTrangDuyet = yctv.TinhTrangDuyet;
-            yctv_dto.DiaDiem = yctv.DiaDiem;
-            yctv_dto.ThoiGian = yctv.ThoiGian;
-            yctv_dto.ID_KhachHang = yctv.KhachHangID_KhachHang;
-            yctv_dto.ID_NhanVien1 = yctv.NhanVien1ID_NhanVien;
-            yctv_dto.ID_NhanVien2 = yctv.NhanVien2ID_NhanVien;
+            var yctv_dto = CreateDLTVDTO(yctv);
             return Ok(yctv_dto);
         }
 
         [HttpPost]
         [Route("DatLichTuVan")]
-        public IActionResult DatLichTuVan([FromBody] DatLichTuVanDTO dto)
+        public IActionResult DatLichTuVan([FromBody] AddDatLichTuVanDTO dto)
         {
-
+            var kh = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == dto.ID_KhachHang);
+            if(kh.XacThuc != "Đã Xác Thực")
+            {
+                return BadRequest("Khách hàng chưa xác thực tài khoản");
+            }
             var DatLichTuVanDomain = new DatLichTuVan()
             {
                 TinhTrangDuyet = "Chưa Duyệt",
                 DiaDiem = dto.DiaDiem,
                 ThoiGian = dto.ThoiGian,
-                KhachHangID_KhachHang = dto.ID_KhachHang,
-                NhanVien1ID_NhanVien = dto.ID_NhanVien1,
-                NhanVien2ID_NhanVien = dto.ID_NhanVien2
+                KhachHang = kh
             };
             VHIDbContext.DatLichTuVan.Add(DatLichTuVanDomain);
             VHIDbContext.SaveChanges();
 
-            var DatLichTuVan_dto = new DatLichTuVanDTO()
-            {
-                ID_YeuCauTuVan = DatLichTuVanDomain.ID_YeuCauTuVan,
-                TinhTrangDuyet = DatLichTuVanDomain.TinhTrangDuyet,
-                DiaDiem = DatLichTuVanDomain.DiaDiem,
-                ThoiGian = DatLichTuVanDomain.ThoiGian,
-                ID_KhachHang = DatLichTuVanDomain.KhachHangID_KhachHang,
-                ID_NhanVien1 = DatLichTuVanDomain.NhanVien1ID_NhanVien,
-                ID_NhanVien2 = DatLichTuVanDomain.NhanVien2ID_NhanVien
-            };
-            return CreatedAtAction(nameof(GetById), new { id = DatLichTuVan_dto.ID_YeuCauTuVan }, DatLichTuVan_dto);
+            var DatLichTuVan_dto = CreateDLTVDTO(DatLichTuVanDomain);
+            
+            return Ok(DatLichTuVan_dto);
         }
 
         [HttpPut]
-        [Route("{id:int}")]
-        public IActionResult Update([FromRoute] int id, [FromBody] DatLichTuVanDTO dto)
+        [Route("UpdateTinhTrangDuyet{id:int}")]
+        public IActionResult UpdateTinhTrangDuyet([FromRoute] int id,string tinhTrangDuyet)
         {
             var dltvDomain = VHIDbContext.DatLichTuVan.FirstOrDefault(x => x.ID_YeuCauTuVan == id);
-            
+
             if (dltvDomain == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy Yêu cầu tư vấn.");
             }
-            dltvDomain.TinhTrangDuyet = dto.TinhTrangDuyet;
-            dltvDomain.DiaDiem = dto.DiaDiem;
-            dltvDomain.ThoiGian = dto.ThoiGian;
-            dltvDomain.KhachHangID_KhachHang = dto.ID_KhachHang;
-            dltvDomain.NhanVien1ID_NhanVien = dto.ID_NhanVien1;
-            dltvDomain.NhanVien2ID_NhanVien = dto.ID_NhanVien2;
-            VHIDbContext.SaveChanges();
-            var updated_dltv_dto = new DatLichTuVanDTO()
+            if (tinhTrangDuyet != "Từ Chối" && tinhTrangDuyet != "Đã Duyệt")
             {
+                return BadRequest("Tình trạng duyệt không hợp lệ!");
+            }
+            dltvDomain.TinhTrangDuyet = tinhTrangDuyet;
+            VHIDbContext.SaveChanges();
+            DatLichTuVanDTO updated_dltv_dto = CreateDLTVDTO(dltvDomain);
+            return Ok(updated_dltv_dto);
+        }
+
+        [HttpPut]
+        [Route("UpdateNhanVien{id_dltv:int},{id_nv:int}")]
+        public IActionResult UpdateNhanVien([FromRoute] int id_dltv, [FromRoute] int id_nv)
+        {
+            var dltvDomain = VHIDbContext.DatLichTuVan.FirstOrDefault(x => x.ID_YeuCauTuVan == id_dltv);
+            var nhanVienDomain = VHIDbContext.NhanVien.FirstOrDefault(x=>x.ID_NhanVien == id_nv);
+
+            if (dltvDomain == null)
+            {
+                return NotFound("Không tìm thấy Yêu cầu tư vấn.");
+            }
+            if (nhanVienDomain == null)
+            {
+                return NotFound("Không tìm thấy nhân viên.");
+            }
+            if(dltvDomain.TinhTrangDuyet!="Đã Duyệt")
+            {
+                return BadRequest("Tình trạng duyệt Yêu cầu tư vấn không hợp lệ: " + dltvDomain.TinhTrangDuyet);
+            }
+            if (dltvDomain.NhanVien1ID_NhanVien != null)
+            {
+                if (dltvDomain.NhanVien1ID_NhanVien == nhanVienDomain.ID_NhanVien)
+                {
+                    return BadRequest("Nhân viên này đã nhận yêu cầu tư vấn trước đó.");
+                }
+                if (dltvDomain.NhanVien2ID_NhanVien != null)
+                {
+                    return BadRequest("Yêu cầu tư vấn đã có đủ nhân viên");
+                }
+                else if (dltvDomain.NhanVien2ID_NhanVien == null)
+                {
+                    dltvDomain.NhanVien2 = nhanVienDomain;
+                    VHIDbContext.SaveChanges();
+                    DatLichTuVanDTO dltv_dto = CreateDLTVDTO(dltvDomain);
+                    return Ok(dltv_dto);
+                }
+            }
+            if (dltvDomain.NhanVien2ID_NhanVien != null)
+            {
+                if (dltvDomain.NhanVien2ID_NhanVien == nhanVienDomain.ID_NhanVien)
+                {
+                    return BadRequest("Nhân viên này đã nhận yêu cầu tư vấn trước đó.");
+                }
+            }
+            if(dltvDomain.NhanVien1 == null)
+            {
+                dltvDomain.NhanVien1 = nhanVienDomain;
+            }
+            VHIDbContext.SaveChanges();
+            DatLichTuVanDTO updated_dltv_dto = CreateDLTVDTO(dltvDomain);
+            return Ok(updated_dltv_dto);
+        }
+
+        private static DatLichTuVanDTO CreateDLTVDTO(DatLichTuVan? dltvDomain)
+        {
+            return new DatLichTuVanDTO()
+            {
+                ID_YeuCauTuVan = dltvDomain.ID_YeuCauTuVan,
                 TinhTrangDuyet = dltvDomain.TinhTrangDuyet,
                 DiaDiem = dltvDomain.DiaDiem,
                 ThoiGian = dltvDomain.ThoiGian,
                 ID_KhachHang = dltvDomain.KhachHangID_KhachHang,
                 ID_NhanVien1 = dltvDomain.NhanVien1ID_NhanVien,
                 ID_NhanVien2 = dltvDomain.NhanVien2ID_NhanVien,
-
             };
-            return Ok(updated_dltv_dto);
         }
 
         [HttpDelete]

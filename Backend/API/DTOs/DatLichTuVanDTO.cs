@@ -11,7 +11,7 @@ namespace API.DTOs
 
         public int ID_KhachHang { get; set; }
 
-        public int ID_NhanVien1 { get; set; }
-        public int ID_NhanVien2 { get; set; }
+        public int? ID_NhanVien1 { get; set; }
+        public int? ID_NhanVien2 { get; set; }
     }
 }

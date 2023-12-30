@@ -43,11 +43,11 @@ namespace API.Domain
 
         public string SoDienThoai { get; set; }
 
-        public CongTy CongTy { get; set; }
+        public CongTy? CongTy { get; set; }
         
         public TaiKhoan TaiKhoan { get; set; }
 
-        public int CongTyID_CongTy { get; set; }
+        public int? CongTyID_CongTy { get; set; }
         public int TaiKhoanID_TaiKhoan { get; set; }
         public string XacThuc { get; set; }
     }
