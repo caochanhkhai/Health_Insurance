@@ -8,8 +8,9 @@ nupkg/
 # Visual Studio Code
 .vscode/
 
-# Migrations folder history
-Migrations/
+# App Settings
+appsettings.json
+appsettings.Development.json
 
 # Rider
 .idea/
