@@ -76,6 +76,7 @@ namespace API.Controllers
            
             var kh = VHIDbContext.KhachHang.FirstOrDefault(b => b.ID_KhachHang == idkh);
             var gbh = VHIDbContext.GoiBaoHiem.FirstOrDefault(b => b.ID_GoiBaoHiem == idgbh);
+            var nv = VHIDbContext.NhanVien.FirstOrDefault(b => b.ID_NhanVien == dto.ID_NhanVien);
             if (kh == null || gbh == null)
             {
                 return BadRequest("Khách hàng hoặc gói bảo hiểm không tồn tại.");
@@ -87,7 +88,9 @@ namespace API.Controllers
                 ThoiGianKiKet = dto.ThoiGianKiKet,
                 ToKhaiSucKhoe = dto.ToKhaiSucKhoe,
                 KhachHang = kh,
-                GoiBaoHiem = gbh
+                GoiBaoHiem = gbh,
+                NhanVien = null
+ 
             };
 
             VHIDbContext.PhieuDangKi.Add(PDKdomain);
@@ -101,7 +104,8 @@ namespace API.Controllers
                 ThoiGianKiKet = PDKdomain.ThoiGianKiKet,
                 ToKhaiSucKhoe = PDKdomain.ToKhaiSucKhoe,
                 ID_GoiBaoHiem = PDKdomain.GoiBaoHiemID_GoiBaoHiem,
-                ID_KhachHang = PDKdomain.KhachHangID_KhachHang
+                ID_KhachHang = PDKdomain.KhachHangID_KhachHang,
+                ID_NhanVien = PDKdomain.NhanVienID_NhanVien
             };
             return Ok(pdk_dto);
         }
