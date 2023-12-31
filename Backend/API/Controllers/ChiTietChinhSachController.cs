@@ -25,7 +25,7 @@ namespace API.Controllers
 
             if (cccsList.Count == 0)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy chi tiết chính sách.");
             }
 
             var cccsDTOList = cccsList.Select(cccs => new ChiTietChinhSachDTO

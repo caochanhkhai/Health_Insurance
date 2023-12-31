@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.Domain;
 using API.DTOs;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,8 +22,21 @@ namespace API.Controllers
         [Route("GetAll")]
         public IActionResult GetAll()
         {
-            var ycct = VHIDbContext.YeuCauChiTra.ToList();
-            return Ok(ycct);
+            var ycctList = VHIDbContext.YeuCauChiTra.ToList();
+
+            if (ycctList == null)
+            {
+                return NotFound("Không tìm thấy yêu cầu chi trả nào.");
+            }
+
+            List<YeuCauChiTraDTO> dsycctDTO = new List<YeuCauChiTraDTO>();
+            foreach (var ycct in ycctList)
+            {
+                var YeuCauChiTraDTO = CreateYeuCauChiTraDTO(ycct);
+                dsycctDTO.Add(YeuCauChiTraDTO);
+            }
+            
+            return Ok(dsycctDTO);
         }
 
         [HttpGet]
@@ -32,8 +46,15 @@ namespace API.Controllers
             var ycct = VHIDbContext.YeuCauChiTra.FirstOrDefault(x => x.ID_YeuCauChiTra == id);
             if (ycct == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy Yêu cầu bảo hiểm.");
             }
+            YeuCauChiTraDTO yctv_dto = CreateYeuCauChiTraDTO(ycct);
+
+            return Ok(yctv_dto);
+        }
+
+        private static YeuCauChiTraDTO CreateYeuCauChiTraDTO(YeuCauChiTra? ycct)
+        {
             var yctv_dto = new YeuCauChiTraDTO();
             yctv_dto.ID_YeuCauChiTra = ycct.ID_YeuCauChiTra;
             yctv_dto.QLBHID = ycct.QLBHID;
@@ -53,17 +74,22 @@ namespace API.Controllers
             yctv_dto.NgayBatDau = ycct.NgayBatDau;
             yctv_dto.NgayKetThuc = ycct.NgayKetThuc;
             yctv_dto.HinhHoaDon = ycct.HinhHoaDon;
-            return Ok(yctv_dto);
+            return yctv_dto;
         }
 
         [HttpPost]
         [Route("YeuCauChiTra")]
-        public IActionResult YeucauChiTra([FromBody] YeuCauChiTraDTO dto)
+        public IActionResult YeucauChiTra(int idkh, int idgbh,[FromBody] AddYeuCauChiTraDTO dto)
         {
+            var qlbh = VHIDbContext.QuanLyBaoHiem.FirstOrDefault(x => x.KhachHangID_KhachHang == idkh && x.GoiBaoHiemID_GoiBaoHiem == idgbh); ;
+            if (qlbh == null)
+            {
+                return NotFound("Không tìm thấy quản lý bảo hiểm tương ứng.");
+            }
 
             var YeuCauChiTraDomain = new YeuCauChiTra()
             {
-                QLBHID = dto.QLBHID,
+                QLBH = qlbh,
                 NguoiYeuCau = dto.NguoiYeuCau,
                 DiaChi = dto.DiaChi,
                 DienThoai = dto.DienThoai,
@@ -84,78 +110,27 @@ namespace API.Controllers
             VHIDbContext.YeuCauChiTra.Add(YeuCauChiTraDomain);
             VHIDbContext.SaveChanges();
 
-            var YeuCauChiTra_dto = new YeuCauChiTraDTO()
-            {
-                ID_YeuCauChiTra = YeuCauChiTraDomain.ID_YeuCauChiTra,
-                QLBHID = YeuCauChiTraDomain.QLBHID,
-                NguoiYeuCau = YeuCauChiTraDomain.NguoiYeuCau,
-                DiaChi = YeuCauChiTraDomain.DiaChi,
-                DienThoai = YeuCauChiTraDomain.DienThoai,
-                Email = YeuCauChiTraDomain.Email,
-                MoiQuanHe = YeuCauChiTraDomain.MoiQuanHe,
-                SoTienYeuCauChiTra = YeuCauChiTraDomain.SoTienYeuCauChiTra,
-                TruongHopChiTra = YeuCauChiTraDomain.TruongHopChiTra,
-                NgayYeuCau = YeuCauChiTraDomain.NgayYeuCau,
-                TinhTrangDuyet = YeuCauChiTraDomain.TinhTrangDuyet,
-                NoiDieuTri = YeuCauChiTraDomain.NoiDieuTri,
-                ChanDoan = YeuCauChiTraDomain.ChanDoan,
-                HauQua = YeuCauChiTraDomain.HauQua,
-                HinhThucDieuTri = YeuCauChiTraDomain.HinhThucDieuTri,
-                NgayBatDau = YeuCauChiTraDomain.NgayBatDau,
-                NgayKetThuc = YeuCauChiTraDomain.NgayKetThuc,
-                HinhHoaDon = YeuCauChiTraDomain.HinhHoaDon
-            };
-            return CreatedAtAction(nameof(GetById), new { id = YeuCauChiTra_dto.ID_YeuCauChiTra }, YeuCauChiTra_dto);
+            var YeuCauChiTra_dto = CreateYeuCauChiTraDTO(YeuCauChiTraDomain);
+            return Ok(YeuCauChiTra_dto);
         }
 
         [HttpPut]
-        [Route("{id:int}")]
-        public IActionResult Update([FromRoute] int id, [FromBody] YeuCauChiTraDTO dto)
+        [Route("CapNhatTinhTrangDuyet{id:int}")]
+        public IActionResult UpdateTinhTrangDuyet([FromRoute] int id, string tinhTrangDuyet)
         {
             var ycctDomain = VHIDbContext.YeuCauChiTra.FirstOrDefault(x => x.ID_YeuCauChiTra == id);
             if (ycctDomain == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy yêu cầu chi trả.");
             }
-            ycctDomain.QLBHID = dto.QLBHID;
-            ycctDomain.NguoiYeuCau = dto.NguoiYeuCau;
-            ycctDomain.DiaChi = dto.DiaChi;
-            ycctDomain.DienThoai = dto.DienThoai;
-            ycctDomain.Email = dto.Email;
-            ycctDomain.MoiQuanHe = dto.MoiQuanHe;
-            ycctDomain.SoTienYeuCauChiTra = dto.SoTienYeuCauChiTra;
-            ycctDomain.TruongHopChiTra = dto.TruongHopChiTra;
-            ycctDomain.NgayYeuCau = dto.NgayYeuCau;
-            ycctDomain.TinhTrangDuyet = dto.TinhTrangDuyet;
-            ycctDomain.NoiDieuTri = dto.NoiDieuTri;
-            ycctDomain.ChanDoan = dto.ChanDoan;
-            ycctDomain.HauQua = dto.HauQua;
-            ycctDomain.HinhThucDieuTri = dto.HinhThucDieuTri;
-            ycctDomain.NgayBatDau = dto.NgayBatDau;
-            ycctDomain.NgayKetThuc = dto.NgayKetThuc;
-            ycctDomain.HinhHoaDon = dto.HinhHoaDon;
-            VHIDbContext.SaveChanges();
-            var updated_ycct_dto = new YeuCauChiTraDTO()
+            if(tinhTrangDuyet!="Từ Chối" && tinhTrangDuyet!="Đã Duyệt")
             {
-                QLBHID = ycctDomain.QLBHID,
-                NguoiYeuCau = ycctDomain.NguoiYeuCau,
-                DiaChi = ycctDomain.DiaChi,
-                DienThoai = ycctDomain.DienThoai,
-                Email = ycctDomain.Email,
-                MoiQuanHe = ycctDomain.MoiQuanHe,
-                SoTienYeuCauChiTra = ycctDomain.SoTienYeuCauChiTra,
-                TruongHopChiTra = ycctDomain.TruongHopChiTra,
-                NgayYeuCau = ycctDomain.NgayYeuCau,
-                TinhTrangDuyet = ycctDomain.TinhTrangDuyet,
-                NoiDieuTri = ycctDomain.NoiDieuTri,
-                ChanDoan = ycctDomain.ChanDoan,
-                HauQua = ycctDomain.HauQua,
-                HinhThucDieuTri = ycctDomain.HinhThucDieuTri,
-                NgayBatDau = ycctDomain.NgayBatDau,
-                NgayKetThuc = ycctDomain.NgayKetThuc,
-                HinhHoaDon = ycctDomain.HinhHoaDon
+                return BadRequest("Tình trạng duyệt không hợp lệ");
+            }
+            ycctDomain.TinhTrangDuyet = tinhTrangDuyet;
+            VHIDbContext.SaveChanges();
 
-            };
+            var updated_ycct_dto = CreateYeuCauChiTraDTO(ycctDomain);
             return Ok(updated_ycct_dto);
         }
 

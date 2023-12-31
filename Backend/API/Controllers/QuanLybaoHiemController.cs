@@ -83,7 +83,7 @@ namespace API.Controllers
             VHIDbContext.QuanLyBaoHiem.Add(QuanLyBaoHiemDomain);
             VHIDbContext.SaveChanges();
 
-            var QaunLyBaoHiem_dto = new QuanLyBaoHiemDTO()
+            var QuanLyBaoHiem_dto = new QuanLyBaoHiemDTO()
             {
                 ID = QuanLyBaoHiemDomain.ID,
                 ID_KhachHang = QuanLyBaoHiemDomain.KhachHangID_KhachHang,
@@ -93,23 +93,19 @@ namespace API.Controllers
                 HanMucDaSuDung = QuanLyBaoHiemDomain.HanMucDaSuDung
 
             };
-            return CreatedAtAction(nameof(GetById), new { id = QaunLyBaoHiem_dto.ID }, QaunLyBaoHiem_dto);
+            return CreatedAtAction(nameof(GetById), new { id = QuanLyBaoHiem_dto.ID }, QuanLyBaoHiem_dto);
         }
 
         [HttpPut]
-        [Route("{id:int}")]
-        public IActionResult Update([FromRoute] int id, [FromBody] QuanLyBaoHiemDTO dto)
+        [Route("CapNhatHanMucSuDung{id:int}")]
+        public IActionResult UpdateHanMucSuDung([FromRoute] int id, decimal HanMucSuDung)
         {
             var qlbhDomain = VHIDbContext.QuanLyBaoHiem.FirstOrDefault(x => x.ID == id);
             if (qlbhDomain == null)
             {
                 return NotFound();
             }
-            qlbhDomain.KhachHangID_KhachHang = dto.ID_KhachHang;
-            qlbhDomain.GoiBaoHiemID_GoiBaoHiem = dto.ID_GoiBaoHiem;
-            qlbhDomain.ThoiGianBatDau = dto.ThoiGianBatDau;
-            qlbhDomain.ThoiGianKetThuc = dto.ThoiGianKetThuc;
-            qlbhDomain.HanMucDaSuDung = dto.HanMucDaSuDung;
+            qlbhDomain.HanMucDaSuDung = qlbhDomain.HanMucDaSuDung + HanMucSuDung;
             VHIDbContext.SaveChanges();
             var updated_qlbh_dto = new QuanLyBaoHiemDTO()
             {
