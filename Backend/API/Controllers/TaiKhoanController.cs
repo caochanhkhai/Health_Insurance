@@ -63,7 +63,6 @@ namespace API.Controllers
         [Route("DangKi")]
         public IActionResult CreateTaiKhoan([FromBody] TaiKhoanDTO dto)
         {
-
             var TaiKhoanDomain = new TaiKhoan()
             {
                 TenDangNhap = dto.TenDangNhap,

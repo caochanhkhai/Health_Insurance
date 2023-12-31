@@ -11,5 +11,6 @@ namespace API.Domain
         public decimal SoTien { get; set; }
         public string TinhTrangDuyet { get; set; }
         public HopDong HopDong { get; set; }
+        public int HopDongID_HopDong { get; set; }
     }
 }

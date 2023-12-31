@@ -1,12 +1,10 @@
 ﻿namespace API.DTOs
 {
-    public class PhieuThanhToanBaoHiemDTO
+    public class AddPhieuThanhToanBaoHiemDTO
     {
-        public int ID_PhieuThanhToan { get; set; }
         public DateTime NgayThanhToan { get; set; }
         public string HinhThucThanhToan { get; set; }
         public decimal SoTien { get; set; }
-        public string TinhTrangDuyet { get; set; }
         public int ID_HopDong { get; set; }
     }
 }
