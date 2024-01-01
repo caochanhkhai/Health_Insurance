@@ -2,9 +2,8 @@
 
 namespace API.DTOs
 {
-    public class KhachHangDTO
+    public class AddKhachHangDTO
     {
-        public int ID_KhachHang { get; set; }
 
         public string HoTen { get; set; }
 
@@ -27,7 +26,6 @@ namespace API.DTOs
         public string ThanhPho { get; set; }
 
         public string Email { get; set; }
-
         public string CMND { get; set; }
 
         public string NgheNghiep { get; set; }
@@ -41,12 +39,6 @@ namespace API.DTOs
         public string NganHang { get; set; }
 
         public string SoDienThoai { get; set; }
-
-        public int? ID_CongTy { get; set; }
-
-        public int ID_TaiKhoan { get; set; }
-
-        public string XacThuc { get; set; }
 
     }
 }

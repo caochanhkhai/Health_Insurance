@@ -49,11 +49,58 @@ namespace API.Controllers
             return Ok(kh_dto);
         }
 
+        [HttpGet]
+        [Route("idtk:int")]
+        public IActionResult GetByIdtk(int idtk)
+        {
+            string query = $"SELECT * FROM KhachHang WHERE TaiKhoanID_TaiKhoan = '{idtk}' ";
+            var qlkh = VHIDbContext.KhachHang.FromSqlRaw(query).ToList();
+
+            if (qlkh == null)
+            {
+                return NotFound();
+            }
+            var kh = qlkh[0];
+            var qlkh_dto = new KhachHangDTO();
+            qlkh_dto.ID_KhachHang = kh.ID_KhachHang;
+            qlkh_dto.HoTen = kh.HoTen;
+            qlkh_dto.GioiTinh = kh.GioiTinh;
+            qlkh_dto.QuocTich = kh.QuocTich;
+            qlkh_dto.NgaySinh = kh.NgaySinh;
+            qlkh_dto.ChieuCao = kh.ChieuCao;
+            qlkh_dto.CanNang = kh.CanNang;
+            qlkh_dto.SoNhaTenDuong = kh.SoNhaTenDuong;
+            qlkh_dto.PhuongXa = kh.PhuongXa;
+            qlkh_dto.QuanHuyen = kh.QuanHuyen;
+            qlkh_dto.ThanhPho = kh.ThanhPho;
+            qlkh_dto.Email = kh.Email;
+            qlkh_dto.CMND = kh.CMND;
+            qlkh_dto.NgheNghiep = kh.NgheNghiep;
+            qlkh_dto.ChiTietCongViec = kh.ChiTietCongViec;
+            qlkh_dto.ThuNhap = kh.ThuNhap;
+            qlkh_dto.SoTaiKhoan = kh.SoTaiKhoan;
+            qlkh_dto.NganHang = kh.NganHang;
+            qlkh_dto.SoDienThoai = kh.SoDienThoai;
+            qlkh_dto.ID_CongTy = kh.CongTyID_CongTy;
+            qlkh_dto.XacThuc = kh.XacThuc;
+            qlkh_dto.ID_TaiKhoan = kh.TaiKhoanID_TaiKhoan;
+            return Ok(qlkh_dto);
+        }
+
         [HttpPost]
         [Route("ThemKhachHang")]
-        public IActionResult CreateKhachHang([FromBody] KhachHangDTO dto, int idtk)
+        public IActionResult CreateKhachHang([FromBody] AddKhachHangDTO dto, int idtk)
         {
             var taiKhoan = VHIDbContext.TaiKhoan.FirstOrDefault(b => b.ID_TaiKhoan == idtk);
+            if(taiKhoan == null)
+            {
+                return NotFound("Không tìm thấy Tài khoản");
+            }
+            var kh = VHIDbContext.KhachHang.FirstOrDefault(x=>x.TaiKhoanID_TaiKhoan==idtk);
+            if (kh != null)
+            {
+                return BadRequest("Đã tồn tại khách hàng cho tài khoản này.");
+            }
             KhachHang KhachHangDomain = CreateKHDomain(dto, taiKhoan);
             VHIDbContext.KhachHang.Add(KhachHangDomain);
             VHIDbContext.SaveChanges();
@@ -80,6 +127,10 @@ namespace API.Controllers
             if (khDomain == null)
             {
                 return NotFound();
+            }
+            if(khDomain.Email != dto.Email)
+            {
+                khDomain.XacThuc = "Chưa Xác Thực";
             }
             UpdateKhachHangDomainByDTO(dto, khDomain);
 
@@ -123,11 +174,11 @@ namespace API.Controllers
             khDomain.XacThuc = "Đã Xác Thực";
 
             VHIDbContext.SaveChanges();
-            KhachHangDTO kh_dto = CreateKHDTO(khDomain, 0, khDomain.TaiKhoanID_TaiKhoan);
+            KhachHangDTO kh_dto = CreateKHDTO(khDomain, khDomain.CongTyID_CongTy, khDomain.TaiKhoanID_TaiKhoan);
             return Ok(kh_dto);
         }
 
-        private static KhachHang CreateKHDomain(KhachHangDTO dto,  TaiKhoan? taiKhoan)
+        private static KhachHang CreateKHDomain(AddKhachHangDTO dto,  TaiKhoan? taiKhoan)
         {
             return new KhachHang()
             {
@@ -178,7 +229,7 @@ namespace API.Controllers
                     SoTaiKhoan = KhachHangDomain.SoTaiKhoan,
                     NganHang = KhachHangDomain.NganHang,
                     SoDienThoai = KhachHangDomain.SoDienThoai,
-                    ID_TaiKhoan = KhachHangDomain.TaiKhoan.ID_TaiKhoan,
+                    ID_TaiKhoan = KhachHangDomain.TaiKhoanID_TaiKhoan,
                     XacThuc = KhachHangDomain.XacThuc
                 };
             }
