@@ -53,35 +53,11 @@ namespace API.Controllers
             return Ok(yctv_dto);
         }
 
-        private static YeuCauChiTraDTO CreateYeuCauChiTraDTO(YeuCauChiTra? ycct)
-        {
-            var yctv_dto = new YeuCauChiTraDTO();
-            yctv_dto.ID_YeuCauChiTra = ycct.ID_YeuCauChiTra;
-            yctv_dto.QLBHID = ycct.QLBHID;
-            yctv_dto.NguoiYeuCau = ycct.NguoiYeuCau;
-            yctv_dto.DiaChi = ycct.DiaChi;
-            yctv_dto.DienThoai = ycct.DienThoai;
-            yctv_dto.Email = ycct.Email;
-            yctv_dto.MoiQuanHe = ycct.MoiQuanHe;
-            yctv_dto.SoTienYeuCauChiTra = ycct.SoTienYeuCauChiTra;
-            yctv_dto.TruongHopChiTra = ycct.TruongHopChiTra;
-            yctv_dto.NgayYeuCau = ycct.NgayYeuCau;
-            yctv_dto.TinhTrangDuyet = ycct.TinhTrangDuyet;
-            yctv_dto.NoiDieuTri = ycct.NoiDieuTri;
-            yctv_dto.ChanDoan = ycct.ChanDoan;
-            yctv_dto.HauQua = ycct.HauQua;
-            yctv_dto.HinhThucDieuTri = ycct.HinhThucDieuTri;
-            yctv_dto.NgayBatDau = ycct.NgayBatDau;
-            yctv_dto.NgayKetThuc = ycct.NgayKetThuc;
-            yctv_dto.HinhHoaDon = ycct.HinhHoaDon;
-            return yctv_dto;
-        }
-
         [HttpPost]
         [Route("YeuCauChiTra")]
-        public IActionResult YeucauChiTra(int idkh, int idgbh,[FromBody] AddYeuCauChiTraDTO dto)
+        public IActionResult YeucauChiTra([FromBody] AddYeuCauChiTraDTO dto)
         {
-            var qlbh = VHIDbContext.QuanLyBaoHiem.FirstOrDefault(x => x.KhachHangID_KhachHang == idkh && x.GoiBaoHiemID_GoiBaoHiem == idgbh); ;
+            var qlbh = VHIDbContext.QuanLyBaoHiem.FirstOrDefault(x => x.ID == dto.QLBHID); ;
             if (qlbh == null)
             {
                 return NotFound("Không tìm thấy quản lý bảo hiểm tương ứng.");
@@ -167,6 +143,30 @@ namespace API.Controllers
                 HinhHoaDon = ycctDomain.HinhHoaDon
             };
             return Ok(ycctDTO);
+        }
+
+        private static YeuCauChiTraDTO CreateYeuCauChiTraDTO(YeuCauChiTra? ycct)
+        {
+            var yctv_dto = new YeuCauChiTraDTO();
+            yctv_dto.ID_YeuCauChiTra = ycct.ID_YeuCauChiTra;
+            yctv_dto.QLBHID = ycct.QLBHID;
+            yctv_dto.NguoiYeuCau = ycct.NguoiYeuCau;
+            yctv_dto.DiaChi = ycct.DiaChi;
+            yctv_dto.DienThoai = ycct.DienThoai;
+            yctv_dto.Email = ycct.Email;
+            yctv_dto.MoiQuanHe = ycct.MoiQuanHe;
+            yctv_dto.SoTienYeuCauChiTra = ycct.SoTienYeuCauChiTra;
+            yctv_dto.TruongHopChiTra = ycct.TruongHopChiTra;
+            yctv_dto.NgayYeuCau = ycct.NgayYeuCau;
+            yctv_dto.TinhTrangDuyet = ycct.TinhTrangDuyet;
+            yctv_dto.NoiDieuTri = ycct.NoiDieuTri;
+            yctv_dto.ChanDoan = ycct.ChanDoan;
+            yctv_dto.HauQua = ycct.HauQua;
+            yctv_dto.HinhThucDieuTri = ycct.HinhThucDieuTri;
+            yctv_dto.NgayBatDau = ycct.NgayBatDau;
+            yctv_dto.NgayKetThuc = ycct.NgayKetThuc;
+            yctv_dto.HinhHoaDon = ycct.HinhHoaDon;
+            return yctv_dto;
         }
 
     }

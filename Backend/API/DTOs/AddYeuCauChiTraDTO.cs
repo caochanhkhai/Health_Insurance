@@ -2,6 +2,7 @@
 {
     public class AddYeuCauChiTraDTO
     {
+        public int QLBHID { get; set; }
         public string NguoiYeuCau { get; set; }
         public string DiaChi { get; set; }
         public string DienThoai { get; set; }
@@ -10,7 +11,6 @@
         public decimal SoTienYeuCauChiTra { get; set; }
         public string TruongHopChiTra { get; set; }
         public DateTime NgayYeuCau { get; set; }
-        public string TinhTrangDuyet { get; set; }
         public string NoiDieuTri { get; set; }
         public string ChanDoan { get; set; }
         public string HauQua { get; set; }
