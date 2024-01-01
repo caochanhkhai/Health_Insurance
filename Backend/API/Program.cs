@@ -25,7 +25,10 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.WithOrigins("http://localhost:8081",
-                                "http://www.contoso.com");
+                                "http://www.contoso.com")
+            .AllowAnyMethod()
+                        .AllowAnyHeader();
+
         });
 });
 var app = builder.Build();

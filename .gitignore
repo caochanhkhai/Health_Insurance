@@ -45,3 +45,5 @@ bld/
 msbuild.log
 msbuild.err
 msbuild.wrn
+Backend/API/appsettings.Development.json
+Backend/API/appsettings.json
