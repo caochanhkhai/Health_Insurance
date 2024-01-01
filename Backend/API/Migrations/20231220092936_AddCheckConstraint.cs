@@ -12,7 +12,7 @@ namespace API.Migrations
         {
             //Thêm ràng buộc Check cho thuộc tính
             //Bảng NhanVien
-            migrationBuilder.Sql("ALTER TABLE NhanVien ADD CONSTRAINT CK_NhanVien_LoaiNhanVien CHECK (LoaiNhanVien IN (N'Nhân viên', N'Quản trị viên', N'Nhân viên'))");
+            migrationBuilder.Sql("ALTER TABLE NhanVien ADD CONSTRAINT CK_NhanVien_LoaiNhanVien CHECK (LoaiNhanVien IN (N'Nhân viên', N'Quản trị viên', N'Nhân viên tài chính'))");
             migrationBuilder.Sql("ALTER TABLE NhanVien ADD CONSTRAINT CK_NhanVien_GioiTinh CHECK (GioiTinh IN ('Nam',N'Nữ'))");
 
             //Bang KhachHang

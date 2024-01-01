@@ -84,6 +84,28 @@ namespace API.Controllers
             return Ok(dsqlbhDTO);
         }
 
+        [HttpGet]
+        [Route("idgbh:int")]
+        public IActionResult GetByIdgbh(int idgbh)
+        {
+            string query = $"SELECT * FROM QuanLyBaoHiem WHERE GoiBaoHiemID_GoiBaoHiem = '{idgbh}' ";
+            var qlbh = VHIDbContext.QuanLyBaoHiem.FromSqlRaw(query).ToList();
+
+            if (qlbh == null)
+            {
+                return NotFound();
+            }
+            var bh = qlbh[0];
+            var qlbh_dto = new QuanLyBaoHiemDTO();
+            qlbh_dto.ID = bh.ID;
+            qlbh_dto.ID_KhachHang = bh.KhachHangID_KhachHang;
+            qlbh_dto.ID_GoiBaoHiem = bh.GoiBaoHiemID_GoiBaoHiem;
+            qlbh_dto.ThoiGianBatDau = bh.ThoiGianBatDau;
+            qlbh_dto.ThoiGianKetThuc = bh.ThoiGianKetThuc;
+            qlbh_dto.HanMucDaSuDung = bh.HanMucDaSuDung;
+            return Ok(qlbh_dto);
+        }
+
         [HttpPost]
         [Route("QuanLyBaoHiem")]
         public IActionResult QuanLyBaoHiem([FromBody] QuanLyBaoHiemDTO dto)

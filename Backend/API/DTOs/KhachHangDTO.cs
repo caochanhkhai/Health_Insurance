@@ -27,6 +27,7 @@ namespace API.DTOs
         public string ThanhPho { get; set; }
 
         public string Email { get; set; }
+
         public string CMND { get; set; }
 
         public string NgheNghiep { get; set; }
@@ -44,6 +45,7 @@ namespace API.DTOs
         public int? ID_CongTy { get; set; }
 
         public int ID_TaiKhoan { get; set; }
+
         public string XacThuc { get; set; }
 
     }

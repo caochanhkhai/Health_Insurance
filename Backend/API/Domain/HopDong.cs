@@ -13,8 +13,15 @@ namespace API.Domain
         public DateTime HieuLuc { get; set; }
 
         public PhieuDangKi PhieuDangKi { get; set; }
+        public int PhieuDangKiID_PhieuDangKi { get; set; }
+
         public NhanVien NhanVien { get; set; }
+        public int NhanVienID_NhanVien { get; set; }    
+
         public KhachHang KhachHang { get; set; }
+        public int KhachHangID_KhachHang { get; set; }
+
         public GoiBaoHiem GoiBaoHiem { get; set; }
+        public int GoiBaoHiemID_GoiBaoHiem { get; set; }
     }
 }
