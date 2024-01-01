@@ -51,9 +51,18 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("ThemKhachHang")]
-        public IActionResult CreateKhachHang([FromBody] KhachHangDTO dto, int idtk)
+        public IActionResult CreateKhachHang([FromBody] AddKhachHangDTO dto, int idtk)
         {
             var taiKhoan = VHIDbContext.TaiKhoan.FirstOrDefault(b => b.ID_TaiKhoan == idtk);
+            if(taiKhoan == null)
+            {
+                return NotFound("Không tìm thấy Tài khoản");
+            }
+            var kh = VHIDbContext.KhachHang.FirstOrDefault(x=>x.TaiKhoanID_TaiKhoan==idtk);
+            if (kh != null)
+            {
+                return BadRequest("Đã tồn tại khách hàng cho tài khoản này.");
+            }
             KhachHang KhachHangDomain = CreateKHDomain(dto, taiKhoan);
             VHIDbContext.KhachHang.Add(KhachHangDomain);
             VHIDbContext.SaveChanges();
@@ -80,6 +89,10 @@ namespace API.Controllers
             if (khDomain == null)
             {
                 return NotFound();
+            }
+            if(khDomain.Email != dto.Email)
+            {
+                khDomain.XacThuc = "Chưa Xác Thực";
             }
             UpdateKhachHangDomainByDTO(dto, khDomain);
 
@@ -123,11 +136,11 @@ namespace API.Controllers
             khDomain.XacThuc = "Đã Xác Thực";
 
             VHIDbContext.SaveChanges();
-            KhachHangDTO kh_dto = CreateKHDTO(khDomain, 0, khDomain.TaiKhoanID_TaiKhoan);
+            KhachHangDTO kh_dto = CreateKHDTO(khDomain, khDomain.CongTyID_CongTy, khDomain.TaiKhoanID_TaiKhoan);
             return Ok(kh_dto);
         }
 
-        private static KhachHang CreateKHDomain(KhachHangDTO dto,  TaiKhoan? taiKhoan)
+        private static KhachHang CreateKHDomain(AddKhachHangDTO dto,  TaiKhoan? taiKhoan)
         {
             return new KhachHang()
             {
@@ -178,7 +191,7 @@ namespace API.Controllers
                     SoTaiKhoan = KhachHangDomain.SoTaiKhoan,
                     NganHang = KhachHangDomain.NganHang,
                     SoDienThoai = KhachHangDomain.SoDienThoai,
-                    ID_TaiKhoan = KhachHangDomain.TaiKhoan.ID_TaiKhoan,
+                    ID_TaiKhoan = KhachHangDomain.TaiKhoanID_TaiKhoan,
                     XacThuc = KhachHangDomain.XacThuc
                 };
             }
