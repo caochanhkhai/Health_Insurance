@@ -49,6 +49,44 @@ namespace API.Controllers
             return Ok(kh_dto);
         }
 
+        [HttpGet]
+        [Route("idtk:int")]
+        public IActionResult GetByIdtk(int idtk)
+        {
+            string query = $"SELECT * FROM KhachHang WHERE TaiKhoanID_TaiKhoan = '{idtk}' ";
+            var qlkh = VHIDbContext.KhachHang.FromSqlRaw(query).ToList();
+
+            if (qlkh == null)
+            {
+                return NotFound();
+            }
+            var kh = qlkh[0];
+            var qlkh_dto = new KhachHangDTO();
+            qlkh_dto.ID_KhachHang = kh.ID_KhachHang;
+            qlkh_dto.HoTen = kh.HoTen;
+            qlkh_dto.GioiTinh = kh.GioiTinh;
+            qlkh_dto.QuocTich = kh.QuocTich;
+            qlkh_dto.NgaySinh = kh.NgaySinh;
+            qlkh_dto.ChieuCao = kh.ChieuCao;
+            qlkh_dto.CanNang = kh.CanNang;
+            qlkh_dto.SoNhaTenDuong = kh.SoNhaTenDuong;
+            qlkh_dto.PhuongXa = kh.PhuongXa;
+            qlkh_dto.QuanHuyen = kh.QuanHuyen;
+            qlkh_dto.ThanhPho = kh.ThanhPho;
+            qlkh_dto.Email = kh.Email;
+            qlkh_dto.CMND = kh.CMND;
+            qlkh_dto.NgheNghiep = kh.NgheNghiep;
+            qlkh_dto.ChiTietCongViec = kh.ChiTietCongViec;
+            qlkh_dto.ThuNhap = kh.ThuNhap;
+            qlkh_dto.SoTaiKhoan = kh.SoTaiKhoan;
+            qlkh_dto.NganHang = kh.NganHang;
+            qlkh_dto.SoDienThoai = kh.SoDienThoai;
+            qlkh_dto.ID_CongTy = kh.CongTyID_CongTy;
+            qlkh_dto.XacThuc = kh.XacThuc;
+            qlkh_dto.ID_TaiKhoan = kh.TaiKhoanID_TaiKhoan;
+            return Ok(qlkh_dto);
+        }
+
         [HttpPost]
         [Route("ThemKhachHang")]
         public IActionResult CreateKhachHang([FromBody] KhachHangDTO dto, int idtk)
