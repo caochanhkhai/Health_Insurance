@@ -43,14 +43,25 @@ namespace API.Controllers
         [Route("idkh:int")]
         public IActionResult GetByIdKh(int idkh)
         {
-            string query = $"SELECT * FROM HopDong WHERE KhachHangID_KhachHang = '{idkh}' ";
-            var qlhd = VHIDbContext.HopDong.FromSqlRaw(query).ToList();
+            var qlhd = VHIDbContext.HopDong.Where(x => x.KhachHangID_KhachHang == idkh).ToList();
 
             if (qlhd == null)
             {
                 return NotFound();
             }
-            var hd = qlhd[0];
+
+            List<HopDongDTO> dshdDTO = new List<HopDongDTO>();
+            foreach (var hd in qlhd)
+            {
+                HopDongDTO qlhd_dto = CreateHopDongDTO(hd);
+                dshdDTO.Add(qlhd_dto);
+            }
+
+            return Ok(dshdDTO);
+        }
+
+        private static HopDongDTO CreateHopDongDTO(HopDong hd)
+        {
             var qlhd_dto = new HopDongDTO();
             qlhd_dto.ID_HopDong = hd.ID_HopDong;
             qlhd_dto.NgayKyKet = hd.NgayKyKet;
@@ -62,7 +73,7 @@ namespace API.Controllers
             qlhd_dto.ID_NhanVien = hd.NhanVienID_NhanVien;
             qlhd_dto.ID_KhachHang = hd.KhachHangID_KhachHang;
             qlhd_dto.ID_GoiBaoHiem = hd.GoiBaoHiemID_GoiBaoHiem;
-            return Ok(qlhd_dto);
+            return qlhd_dto;
         }
 
         [HttpPost]
