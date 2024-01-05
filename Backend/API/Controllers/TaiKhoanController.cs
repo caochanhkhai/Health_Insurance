@@ -61,7 +61,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("DangKi")]
-        public IActionResult CreateTaiKhoan([FromBody] TaiKhoanDTO dto)
+        public IActionResult CreateTaiKhoan([FromBody] AddTaiKhoanDTO dto)
         {
             var TaiKhoanDomain = new TaiKhoan()
             {
@@ -91,7 +91,7 @@ namespace API.Controllers
             var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.TenDangNhap == tenDN && x.MatKhau == HashPassword(MK));
             if (tk == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy tài khoản.");
             }
             var jwtService = new JwtService("vhihealthinsurance");
             var accessToken = jwtService.GenerateToken(tk.ID_TaiKhoan.ToString(), tk.TenDangNhap, 120);
