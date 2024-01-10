@@ -45,6 +45,27 @@ namespace API.Controllers
             return Ok(cs_dto);
         }
 
+        [HttpPost]
+        [Route("ThemChinhSach")]
+        public IActionResult ThemCS( [FromBody] ChinhSachDTO dto)
+        {
+
+            ChinhSach cs_Domain = new ChinhSach()
+            {
+                STT = dto.STT,
+                TenChinhSach = dto.TenChinhSach,
+                ThoiGianPhatHanh = dto.ThoiGianPhatHanh
+            };
+
+            VHIDbContext.ChinhSach.Add(cs_Domain);
+            VHIDbContext.SaveChanges();
+
+            ChinhSachDTO csDTO = CreateChinhSachDTO(cs_Domain);
+
+            return Ok(csDTO);
+        }
+
+
         private static ChinhSachDTO CreateChinhSachDTO(ChinhSach? cs)
         {
             return new ChinhSachDTO()

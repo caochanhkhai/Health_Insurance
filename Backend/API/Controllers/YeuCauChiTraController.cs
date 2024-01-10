@@ -90,6 +90,29 @@ namespace API.Controllers
             return Ok(YeuCauChiTra_dto);
         }
 
+        [HttpPut("XuLyYeuCauChiTra/{id}")]
+        public IActionResult XuLyYeuCauChiTra(int id, string tinhTrangDuyet)
+        {
+            var ycctDomain = VHIDbContext.YeuCauChiTra.FirstOrDefault(x => x.ID_YeuCauChiTra == id);
+
+            if (ycctDomain == null)
+            {
+                return NotFound("Không tìm thấy yêu cầu chi trả.");
+            }
+            if (tinhTrangDuyet != "Từ Chối" && tinhTrangDuyet != "Đã Duyệt")
+            {
+                return BadRequest("Tình trạng duyệt không hợp lệ");
+            }
+            // Cập nhật tình trạng duyệt và lưu vào cơ sở dữ liệu
+            ycctDomain.TinhTrangDuyet = tinhTrangDuyet;
+            VHIDbContext.SaveChanges();
+
+            YeuCauChiTraDTO ycctDTO = CreateYeuCauChiTraDTO(ycctDomain);
+
+            return Ok(ycctDTO);
+        }
+
+
         [HttpPut]
         [Route("CapNhatTinhTrangDuyet{id:int}")]
         public IActionResult UpdateTinhTrangDuyet([FromRoute] int id, string tinhTrangDuyet)

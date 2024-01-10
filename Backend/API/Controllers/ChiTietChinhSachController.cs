@@ -1,4 +1,5 @@
 ﻿using API.Data;
+using API.Domain;
 using API.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,43 @@ namespace API.Controllers
             }).ToList();
 
             return Ok(cccsDTOList);
+        }
+
+
+        [HttpPut("ChinhSuaBaoHiem/{id}")]
+        public IActionResult ChinhSuaBaoHiem(int idgbh, int idcs, [FromBody] ChiTietChinhSachDTO dto)
+        {
+            var ctcsDomain = VHIDbContext.ChiTietChinhSach.FirstOrDefault(x => x.ID == idcs);
+            var csDomain = VHIDbContext.ChinhSach.FirstOrDefault(x => x.ID_ChinhSach == idcs);
+            var bhDomain = VHIDbContext.GoiBaoHiem.FirstOrDefault(x => x.ID_GoiBaoHiem == idgbh);
+            if (bhDomain == null || bhDomain == null)
+            {
+                return NotFound("Không tìm thấy.");
+            }
+
+            // Cập nhật và lưu vào cơ sở dữ liệu
+            ctcsDomain.STT = dto.STT;
+            ctcsDomain.HanMucChiTra = dto.HanMucChiTra;
+            ctcsDomain.DieuKienApDung= dto.DieuKienApDung;
+            ctcsDomain.Mota= dto.Mota;
+            VHIDbContext.SaveChanges();
+
+            ChiTietChinhSachDTO ctcsDTO = CreateCTCSDTO(ctcsDomain);
+
+            return Ok(ctcsDTO);
+        }
+
+        private static ChiTietChinhSachDTO CreateCTCSDTO(ChiTietChinhSach? ctcs)
+        {
+            var ctcs_dto = new ChiTietChinhSachDTO();
+            ctcs_dto.ID = ctcs.ID;
+            ctcs_dto.ID_ChinhSach = ctcs.ChinhSachID_ChinhSach;
+            ctcs_dto.ID_GoiBaoHiem = ctcs.GoiBaoHiemID_GoiBaoHiem;
+            ctcs_dto.STT = ctcs.STT;
+            ctcs_dto.HanMucChiTra = ctcs.HanMucChiTra;
+            ctcs_dto.DieuKienApDung = ctcs.DieuKienApDung;
+            ctcs_dto.Mota = ctcs.Mota;
+            return ctcs_dto;
         }
     }
 }

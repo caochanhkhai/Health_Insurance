@@ -2,6 +2,7 @@
 using API.Domain;
 using API.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace API.Controllers
@@ -107,7 +108,6 @@ namespace API.Controllers
             };
             return Ok(pdk_dto);
         }
-
         [HttpPut("XetDuyetPhieuDangKy/{id}")]
         public IActionResult XetDuyetPhieuDangKy(int id, [FromBody] PhieuDangKiDTO phieuDangKiDto)
         {
@@ -159,19 +159,25 @@ namespace API.Controllers
             return Ok(phieudk_dto);
         }
 
-        private static PhieuDangKiDTO CreatePhieuDKDTO(PhieuDangKi? phieuDangKiDomain)
-        {
-            return new PhieuDangKiDTO
-            {
-                ID_PhieuDangKi = phieuDangKiDomain.ID_PhieuDangKi,
-                TinhTrangDuyet = phieuDangKiDomain.TinhTrangDuyet,
-                DiaDiemKiKet = phieuDangKiDomain.DiaDiemKiKet,
-                ThoiGianKiKet = phieuDangKiDomain.ThoiGianKiKet,
-                ToKhaiSucKhoe = phieuDangKiDomain.ToKhaiSucKhoe,
-                ID_KhachHang = phieuDangKiDomain.KhachHangID_KhachHang,
-                ID_GoiBaoHiem = phieuDangKiDomain.GoiBaoHiemID_GoiBaoHiem,
-                ID_NhanVien = phieuDangKiDomain.NhanVienID_NhanVien
-            };
-        }
+
     }
+}
+
+[HttpPut("CungCapToKhai/{id}")]
+public IActionResult CungCapToKhai(int idpdk, int id, string toKhai)
+{
+    //var khDomain = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == id);
+    var pdkDomain = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == idpdk);
+    if (pdkDomain == null)
+    {
+        return NotFound("Không tìm thấy phiếu đăng ký.");
+    }
+
+    // Cập nhật tờ khai và lưu vào cơ sở dữ liệu
+    pdkDomain.ToKhaiSucKhoe = toKhai;
+    VHIDbContext.SaveChanges();
+
+    PhieuDangKiDTO pdkDTO = CreatePDKDTO(pdkDomain);
+
+    return Ok(pdkDTO);
 }
