@@ -22,7 +22,15 @@ namespace API.Controllers
         public IActionResult GetAll()
         {
             var qlBH = VHIDbContext.QuanLyBaoHiem.ToList();
-            return Ok(qlBH);
+
+            //return Ok(qlBH);
+            List<QuanLyBaoHiemDTO> dsqlbhDTO = new List<QuanLyBaoHiemDTO>();
+            foreach (var qlbh in qlBH)
+            {
+                QuanLyBaoHiemDTO qlbh_dto = CreateQuanLyBaoHiemDTO(qlbh);
+                dsqlbhDTO.Add(qlbh_dto);
+            }
+            return Ok(dsqlbhDTO);
         }
 
         [HttpGet]
