@@ -62,21 +62,6 @@ namespace API.Controllers
             return Ok(gbh_dto);
         }
 
-        private static GoiBaoHiemDTO CreateGoiBaoHiemDTO(GoiBaoHiem? gbh)
-        {
-            return new GoiBaoHiemDTO()
-            {
-                ID_GoiBaoHiem = gbh.ID_GoiBaoHiem,
-                TenBaoHiem = gbh.TenBaoHiem,
-                TenGoi = gbh.TenGoi,
-                GiaTien = gbh.GiaTien,
-                ThoiHan = gbh.ThoiHan,
-                MoTa = gbh.MoTa,
-                NgayPhatHanh = gbh.NgayPhatHanh,
-                TinhTrang = gbh.TinhTrang,
-                HinhAnh = gbh.HinhAnh
-            };
-        }
         [HttpPost]
         [Route("ThemGoiBaoHiem")]
         public IActionResult ThemCS([FromBody] GoiBaoHiemDTO dto)
@@ -90,7 +75,7 @@ namespace API.Controllers
                 ThoiHan = dto.ThoiHan,
                 MoTa = dto.MoTa,
                 NgayPhatHanh = dto.NgayPhatHanh,
-                TinhTrang = dto.TinhTrang,  
+                TinhTrang = dto.TinhTrang,
                 HinhAnh = dto.HinhAnh
             };
 
@@ -113,13 +98,13 @@ namespace API.Controllers
             }
             // Cập nhật và lưu vào cơ sở dữ liệu
             gbhDomain.TenBaoHiem = dto.TenBaoHiem;
-            gbhDomain.TenGoi= dto.TenGoi;
-            gbhDomain.GiaTien= dto.GiaTien;
-            gbhDomain.ThoiHan= dto.ThoiHan;
-            gbhDomain.MoTa= dto.MoTa;
-            gbhDomain.NgayPhatHanh= dto.NgayPhatHanh;
-            gbhDomain.TinhTrang= dto.TinhTrang;
-            gbhDomain.HinhAnh= dto.HinhAnh;
+            gbhDomain.TenGoi = dto.TenGoi;
+            gbhDomain.GiaTien = dto.GiaTien;
+            gbhDomain.ThoiHan = dto.ThoiHan;
+            gbhDomain.MoTa = dto.MoTa;
+            gbhDomain.NgayPhatHanh = dto.NgayPhatHanh;
+            gbhDomain.TinhTrang = dto.TinhTrang;
+            gbhDomain.HinhAnh = dto.HinhAnh;
             VHIDbContext.SaveChanges();
 
             GoiBaoHiemDTO gbhDTO = CreateGBHDTO(gbhDomain);
@@ -127,6 +112,23 @@ namespace API.Controllers
             return Ok(gbhDTO);
         }
 
+
+        private static GoiBaoHiemDTO CreateGoiBaoHiemDTO(GoiBaoHiem? gbh)
+        {
+            return new GoiBaoHiemDTO()
+            {
+                ID_GoiBaoHiem = gbh.ID_GoiBaoHiem,
+                TenBaoHiem = gbh.TenBaoHiem,
+                TenGoi = gbh.TenGoi,
+                GiaTien = gbh.GiaTien,
+                ThoiHan = gbh.ThoiHan,
+                MoTa = gbh.MoTa,
+                NgayPhatHanh = gbh.NgayPhatHanh,
+                TinhTrang = gbh.TinhTrang,
+                HinhAnh = gbh.HinhAnh
+            };
+        }
+        
         private static GoiBaoHiemDTO CreateGBHDTO(GoiBaoHiem? gbh)
         {
             return new GoiBaoHiemDTO()

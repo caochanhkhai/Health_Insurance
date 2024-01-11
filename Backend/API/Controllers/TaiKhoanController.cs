@@ -25,17 +25,14 @@ namespace API.Controllers
         public IActionResult GetAll()
         {
             var dstk = VHIDbContext.TaiKhoan.ToList();
+            if(dstk.Count()==0 || dstk == null)
+            {
+                return NotFound("Không tồn tại tài khoản");
+            }
             List<TaiKhoanDTO> dstkDTO = new List<TaiKhoanDTO>();
             foreach (var tk in dstk)
             {
-                TaiKhoanDTO tk_dto = new TaiKhoanDTO()
-                {
-                    ID_TaiKhoan = tk.ID_TaiKhoan,
-                    TenDangNhap = tk.TenDangNhap,
-                    MatKhau = "",
-                    LoaiTaiKhoan = tk.LoaiTaiKhoan,
-                    TinhTrang = tk.TinhTrang
-                };
+                TaiKhoanDTO tk_dto = CreateTaiKhoanDTO(tk);
                 dstkDTO.Add(tk_dto);
             }
             return Ok(dstkDTO);
@@ -48,14 +45,9 @@ namespace API.Controllers
             var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == id);
             if (tk == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy tài khoản");
             }
-            var tk_dto = new TaiKhoanDTO();
-            tk_dto.ID_TaiKhoan = tk.ID_TaiKhoan;
-            tk_dto.TenDangNhap = tk.TenDangNhap;
-            tk_dto.MatKhau = tk.MatKhau;
-            tk_dto.LoaiTaiKhoan = tk.LoaiTaiKhoan;
-            tk_dto.TinhTrang = tk.TinhTrang;
+            TaiKhoanDTO tk_dto = CreateTaiKhoanDTO(tk);
             return Ok(tk_dto);
         }
 
@@ -73,17 +65,38 @@ namespace API.Controllers
             VHIDbContext.TaiKhoan.Add(TaiKhoanDomain);
             VHIDbContext.SaveChanges();
 
-            var TaiKhoan_dto = new TaiKhoanDTO()
+            TaiKhoanDTO TaiKhoan_dto = CreateTaiKhoanDTO(TaiKhoanDomain);
+            return Ok(TaiKhoan_dto);
+        }
+
+        [HttpPost]
+        [Route("ThemTaiKhoanByADMIN")]
+        public IActionResult CreateTaiKhoanByADMIN([FromBody] AddTaiKhoanByAdminDTO dto)
+        {
+            //Kiểm tra loại tài khoản
+            if(dto.LoaiTaiKhoan != "ADMIN" && dto.LoaiTaiKhoan != "NVTC" && dto.LoaiTaiKhoan != "NV")
             {
-                ID_TaiKhoan = TaiKhoanDomain.ID_TaiKhoan,
-                TenDangNhap = TaiKhoanDomain.TenDangNhap,
-                MatKhau = TaiKhoanDomain.MatKhau,
-                LoaiTaiKhoan = TaiKhoanDomain.LoaiTaiKhoan,
-                TinhTrang = TaiKhoanDomain.TinhTrang
+                return BadRequest("Loại tài khoản không hợp lệ");
+            }
+            //Kiểm tra tình trạng hoạt động
+            if (dto.TinhTrang != "Đã Khóa" && dto.TinhTrang != "Hoạt Động")
+            {
+                return BadRequest("Tình trạng hoạt động không hợp lệ");
+            }
+            var TaiKhoanDomain = new TaiKhoan()
+            {
+                TenDangNhap = dto.TenDangNhap,
+                MatKhau = HashPassword(dto.MatKhau),
+                LoaiTaiKhoan = dto.LoaiTaiKhoan,
+                TinhTrang = dto.TinhTrang
             };
+            VHIDbContext.TaiKhoan.Add(TaiKhoanDomain);
+            VHIDbContext.SaveChanges();
+
+            TaiKhoanDTO TaiKhoan_dto = CreateTaiKhoanDTO(TaiKhoanDomain);
             return CreatedAtAction(nameof(GetById), new { id = TaiKhoan_dto.ID_TaiKhoan }, TaiKhoan_dto);
         }
-        
+
         [HttpGet]
         [Route("DangNhap(TenDangNhap:string,MatKhau:string)")]
         public IActionResult DangNhap(string tenDN,string MK)
@@ -96,12 +109,7 @@ namespace API.Controllers
             var jwtService = new JwtService("vhihealthinsurance");
             var accessToken = jwtService.GenerateToken(tk.ID_TaiKhoan.ToString(), tk.TenDangNhap, 120);
 
-            var tk_dto = new TaiKhoanDTO();
-            tk_dto.ID_TaiKhoan = tk.ID_TaiKhoan;
-            tk_dto.TenDangNhap = tk.TenDangNhap;
-            tk_dto.MatKhau = "";
-            tk_dto.LoaiTaiKhoan = tk.LoaiTaiKhoan;
-            tk_dto.TinhTrang = tk.TinhTrang;
+            TaiKhoanDTO tk_dto = CreateTaiKhoanDTO(tk);
 
             var response = new
             {
@@ -109,6 +117,45 @@ namespace API.Controllers
                 TaiKhoan = tk_dto
             };
             return Ok(response);
+        }
+
+        [HttpPut("ChinhSuaTinhTrangHoatDong")]
+        public IActionResult ChinhSuaTinhTrangHoatDong([FromBody] UpdateTinhTrangTaiKhoanDTO dto)
+        {
+            var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == dto.id);
+            if (tk == null)
+            {
+                return NotFound("Không tồn tại tài khoản.");
+            }
+            //Kiểm tra tình trạng hoạt động
+            if (dto.tinhTrang != "Đã Khóa" && dto.tinhTrang != "Hoạt Động")
+            {
+                return BadRequest("Tình trạng hoạt động không hợp lệ");
+            }
+            // Cập nhật và lưu vào cơ sở dữ liệu
+            tk.TinhTrang = dto.tinhTrang;
+            VHIDbContext.SaveChanges();
+
+            TaiKhoanDTO tk_dto = CreateTaiKhoanDTO(tk);
+
+            return Ok(tk_dto);
+        }
+
+        [HttpDelete]
+        [Route("{id:int}")]
+        public IActionResult XoaTaiKhoan([FromRoute] int id)
+        {
+            var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == id);
+            if (tk == null)
+            {
+                return NotFound("Không tồn tại tài khoản.");
+            }
+            VHIDbContext.TaiKhoan.Remove(tk);
+            VHIDbContext.SaveChanges();
+
+            TaiKhoanDTO tk_dto = CreateTaiKhoanDTO(tk);
+
+            return Ok(tk_dto);
         }
 
         private string HashPassword(string password)
@@ -131,5 +178,17 @@ namespace API.Controllers
                 return builder.ToString();
             }
         }
+
+        private static TaiKhoanDTO CreateTaiKhoanDTO(TaiKhoan? tk)
+        {
+            var tk_dto = new TaiKhoanDTO();
+            tk_dto.ID_TaiKhoan = tk.ID_TaiKhoan;
+            tk_dto.TenDangNhap = tk.TenDangNhap;
+            tk_dto.MatKhau = "";/*tk.MatKhau;*/
+            tk_dto.LoaiTaiKhoan = tk.LoaiTaiKhoan;
+            tk_dto.TinhTrang = tk.TinhTrang;
+            return tk_dto;
+        }
+
     }
 }

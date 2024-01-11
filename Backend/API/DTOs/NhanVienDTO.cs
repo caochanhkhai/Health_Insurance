@@ -1,10 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using API.Domain;
 
-namespace API.Domain
+namespace API.DTOs
 {
-    public class NhanVien
+    public class NhanVienDTO
     {
-        [Key]
         public int ID_NhanVien { get; set; }
 
         public string HoTen { get; set; }
@@ -15,7 +14,7 @@ namespace API.Domain
 
         public DateTime NgaySinh { get; set; }
 
-        public string CMND {  get; set; }
+        public string CMND { get; set; }
 
         public string SoNhaTenDuong { get; set; }
 
@@ -35,7 +34,6 @@ namespace API.Domain
 
         public string SoDienThoai { get; set; }
 
-        public TaiKhoan TaiKhoan { get; set;}
-        public int TaiKhoanID_TaiKhoan { get; set;}
+        public int ID_TaiKhoan { get; set; }
     }
 }

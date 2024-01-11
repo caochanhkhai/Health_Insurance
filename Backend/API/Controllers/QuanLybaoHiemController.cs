@@ -23,7 +23,6 @@ namespace API.Controllers
         {
             var qlBH = VHIDbContext.QuanLyBaoHiem.ToList();
 
-            //return Ok(qlBH);
             List<QuanLyBaoHiemDTO> dsqlbhDTO = new List<QuanLyBaoHiemDTO>();
             foreach (var qlbh in qlBH)
             {

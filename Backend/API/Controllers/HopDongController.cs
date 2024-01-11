@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class HopDongController: ControllerBase
     {
         private readonly VHIDbContext VHIDbContext;
@@ -16,149 +18,122 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("GetAll")]
+        public IActionResult GetAll()
+        {
+            var hdList = VHIDbContext.HopDong.ToList();
+
+            if (hdList.Count()==0 || hdList == null)
+            {
+                return NotFound("Không tìm thấy hợp đồng nào.");
+            }
+
+            List<HopDongDTO> dshdDTO = new List<HopDongDTO>();
+            foreach (var hd in hdList)
+            {
+                var HopDongDTO = CreateHDDTO(hd);
+                dshdDTO.Add(HopDongDTO);
+            }
+
+            return Ok(dshdDTO);
+        }
+
+        [HttpGet]
         [Route("id:int")]
         public IActionResult GetById(int id)
         {
-            var qlhd = VHIDbContext.HopDong.FirstOrDefault(x => x.ID_HopDong == id);
+            var hd = VHIDbContext.HopDong.FirstOrDefault(x => x.ID_HopDong == id);
 
-            if (qlhd == null)
+            if (hd == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy hợp đồng");
             }
-            var qlhd_dto = new HopDongDTO();
-            qlhd_dto.ID_HopDong = qlhd.ID_HopDong;
-            qlhd_dto.NgayKyKet = qlhd.NgayKyKet;
-            qlhd_dto.ThoiHan = qlhd.ThoiHan;
-            qlhd_dto.GiaTriHopDong = qlhd.GiaTriHopDong;
-            qlhd_dto.DieuKhoan = qlhd.DieuKhoan;
-            qlhd_dto.HieuLuc = qlhd.HieuLuc;
-            qlhd_dto.ID_PhieuDangKi = qlhd.PhieuDangKiID_PhieuDangKi;
-            qlhd_dto.ID_NhanVien = qlhd.NhanVienID_NhanVien;
-            qlhd_dto.ID_KhachHang = qlhd.KhachHangID_KhachHang;
-            qlhd_dto.ID_GoiBaoHiem = qlhd.GoiBaoHiemID_GoiBaoHiem;
-            return Ok(qlhd_dto);
+            HopDongDTO hd_dto = CreateHDDTO(hd);
+            return Ok(hd_dto);
         }
 
         [HttpGet]
         [Route("idkh:int")]
         public IActionResult GetByIdKh(int idkh)
         {
-            var qlhd = VHIDbContext.HopDong.Where(x => x.KhachHangID_KhachHang == idkh).ToList();
+            var dshd = VHIDbContext.HopDong.Where(x => x.KhachHangID_KhachHang == idkh).ToList();
 
-            if (qlhd == null)
+            if (dshd.Count() == 0 || dshd == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy hợp đồng với khách hàng tương ứng");
             }
 
             List<HopDongDTO> dshdDTO = new List<HopDongDTO>();
-            foreach (var hd in qlhd)
+            foreach (var hd in dshd)
             {
-                HopDongDTO qlhd_dto = CreateHopDongDTO(hd);
-                dshdDTO.Add(qlhd_dto);
+                HopDongDTO hd_dto = CreateHDDTO(hd);
+                dshdDTO.Add(hd_dto);
             }
 
             return Ok(dshdDTO);
-        }
-
-        private static HopDongDTO CreateHopDongDTO(HopDong hd)
-        {
-            var qlhd_dto = new HopDongDTO();
-            qlhd_dto.ID_HopDong = hd.ID_HopDong;
-            qlhd_dto.NgayKyKet = hd.NgayKyKet;
-            qlhd_dto.ThoiHan = hd.ThoiHan;
-            qlhd_dto.GiaTriHopDong = hd.GiaTriHopDong;
-            qlhd_dto.DieuKhoan = hd.DieuKhoan;
-            qlhd_dto.HieuLuc = hd.HieuLuc;
-            qlhd_dto.ID_PhieuDangKi = hd.PhieuDangKiID_PhieuDangKi;
-            qlhd_dto.ID_NhanVien = hd.NhanVienID_NhanVien;
-            qlhd_dto.ID_KhachHang = hd.KhachHangID_KhachHang;
-            qlhd_dto.ID_GoiBaoHiem = hd.GoiBaoHiemID_GoiBaoHiem;
-            return qlhd_dto;
         }
 
         [HttpGet]
         [Route("idgbh:int")]
         public IActionResult GetByIdgbh(int idgbh)
         {
-            string query = $"SELECT * FROM HopDong WHERE GoiBaoHiemID_GoiBaoHiem = '{idgbh}' ";
-            var qlhd = VHIDbContext.HopDong.FromSqlRaw(query).ToList();
+            var dshd = VHIDbContext.HopDong.Where(x=>x.GoiBaoHiemID_GoiBaoHiem == idgbh).ToList();
 
-            if (qlhd == null)
+            if (dshd.Count() == 0 || dshd == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy hợp đồng với gói bảo hiểm tương ứng");
             }
-            var hd = qlhd[0];
-            var qlhd_dto = new HopDongDTO();
-            qlhd_dto.ID_HopDong = hd.ID_HopDong;
-            qlhd_dto.NgayKyKet = hd.NgayKyKet;
-            qlhd_dto.ThoiHan = hd.ThoiHan;
-            qlhd_dto.GiaTriHopDong = hd.GiaTriHopDong;
-            qlhd_dto.DieuKhoan = hd.DieuKhoan;
-            qlhd_dto.HieuLuc = hd.HieuLuc;
-            qlhd_dto.ID_PhieuDangKi = hd.PhieuDangKiID_PhieuDangKi;
-            qlhd_dto.ID_NhanVien = hd.NhanVienID_NhanVien;
-            qlhd_dto.ID_KhachHang = hd.KhachHangID_KhachHang;
-            qlhd_dto.ID_GoiBaoHiem = hd.GoiBaoHiemID_GoiBaoHiem;
-            return Ok(qlhd_dto);
+            List<HopDongDTO> dshdDTO = new List<HopDongDTO>();
+            foreach (var item in dshd)
+            {
+                HopDongDTO hdDomain = CreateHDDTO(item);
+                dshdDTO.Add(hdDomain);
+            }
+            return Ok(dshdDTO);
         }
 
         [HttpGet]
         [Route("idnv:int")]
         public IActionResult GetByIdNv(int idnv)
         {
-            string query = $"SELECT * FROM HopDong WHERE NhanVienID_NhanVien = '{idnv}' ";
-            var qlhd = VHIDbContext.HopDong.FromSqlRaw(query).ToList();
+            var dshd = VHIDbContext.HopDong.Where(x => x.NhanVienID_NhanVien == idnv).ToList();
 
-            if (qlhd == null)
+            if (dshd.Count() == 0 || dshd == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy hợp đồng với nhân viên tương ứng");
             }
-            var hd = qlhd[0];
-            var qlhd_dto = new HopDongDTO();
-            qlhd_dto.ID_HopDong = hd.ID_HopDong;
-            qlhd_dto.NgayKyKet = hd.NgayKyKet;
-            qlhd_dto.ThoiHan = hd.ThoiHan;
-            qlhd_dto.GiaTriHopDong = hd.GiaTriHopDong;
-            qlhd_dto.DieuKhoan = hd.DieuKhoan;
-            qlhd_dto.HieuLuc = hd.HieuLuc;
-            qlhd_dto.ID_PhieuDangKi = hd.PhieuDangKiID_PhieuDangKi;
-            qlhd_dto.ID_NhanVien = hd.NhanVienID_NhanVien;
-            qlhd_dto.ID_KhachHang = hd.KhachHangID_KhachHang;
-            qlhd_dto.ID_GoiBaoHiem = hd.GoiBaoHiemID_GoiBaoHiem;
-            return Ok(qlhd_dto);
+            List<HopDongDTO> dshdDTO = new List<HopDongDTO>();
+            foreach (var item in dshd)
+            {
+                HopDongDTO hdDomain = CreateHDDTO(item);
+                dshdDTO.Add(hdDomain);
+            }
+            return Ok(dshdDTO);
         }
 
         [HttpGet]
         [Route("idpdk:int")]
         public IActionResult GetByIdPDK(int idpdk)
         {
-            string query = $"SELECT * FROM HopDong WHERE PhieuDangKiID_PhieuDangKi = '{idpdk}' ";
-            var qlhd = VHIDbContext.HopDong.FromSqlRaw(query).ToList();
+            var dshd = VHIDbContext.HopDong.Where(x => x.PhieuDangKiID_PhieuDangKi == idpdk).ToList();
 
-            if (qlhd == null)
+            if (dshd.Count() == 0 || dshd == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy hợp đồng với phiếu đăng kí tương ứng");
             }
-            var hd = qlhd[0];
-            var qlhd_dto = new HopDongDTO();
-            qlhd_dto.ID_HopDong = hd.ID_HopDong;
-            qlhd_dto.NgayKyKet = hd.NgayKyKet;
-            qlhd_dto.ThoiHan = hd.ThoiHan;
-            qlhd_dto.GiaTriHopDong = hd.GiaTriHopDong;
-            qlhd_dto.DieuKhoan = hd.DieuKhoan;
-            qlhd_dto.HieuLuc = hd.HieuLuc;
-            qlhd_dto.ID_PhieuDangKi = hd.PhieuDangKiID_PhieuDangKi;
-            qlhd_dto.ID_NhanVien = hd.NhanVienID_NhanVien;
-            qlhd_dto.ID_KhachHang = hd.KhachHangID_KhachHang;
-            qlhd_dto.ID_GoiBaoHiem = hd.GoiBaoHiemID_GoiBaoHiem;
-            return Ok(qlhd_dto);
+            List<HopDongDTO> dshdDTO = new List<HopDongDTO>();
+            foreach (var item in dshd)
+            {
+                HopDongDTO hdDomain = CreateHDDTO(item);
+                dshdDTO.Add(hdDomain);
+            }
+            return Ok(dshdDTO);
         }
 
         [HttpPost]
         [Route("HopDong")]
         public IActionResult HopDong([FromBody] HopDongDTO dto)
         {
-
             var HopDongDomain = new HopDong()
             {
                 KhachHangID_KhachHang = dto.ID_KhachHang,
@@ -174,27 +149,14 @@ namespace API.Controllers
             VHIDbContext.HopDong.Add(HopDongDomain);
             VHIDbContext.SaveChanges();
 
-            var HopDong_dto = new HopDongDTO()
-            {
-                ID_HopDong = HopDongDomain.ID_HopDong,
-                ID_KhachHang = HopDongDomain.KhachHangID_KhachHang,
-                ID_GoiBaoHiem = HopDongDomain.GoiBaoHiemID_GoiBaoHiem,
-                ID_PhieuDangKi = HopDongDomain.PhieuDangKiID_PhieuDangKi,
-                ID_NhanVien = HopDongDomain.NhanVienID_NhanVien,
-                NgayKyKet = HopDongDomain.NgayKyKet,
-                ThoiHan = HopDongDomain.ThoiHan,
-                GiaTriHopDong = HopDongDomain.GiaTriHopDong,
-                DieuKhoan = HopDongDomain.DieuKhoan,
-                HieuLuc = HopDongDomain.HieuLuc
-            };
-            return CreatedAtAction(nameof(GetById), new { id = HopDong_dto.ID_HopDong }, HopDong_dto);
+            HopDongDTO HopDong_dto = CreateHDDTO(HopDongDomain);
+            return Ok(HopDong_dto);
         }
 
         [HttpPut("ChinhSuaHopDong/{id}")]
         public IActionResult ChinhSuaHopDong(int id, [FromBody] HopDongDTO hd)
         {
             var hdDomain = VHIDbContext.HopDong.FirstOrDefault(x => x.ID_HopDong == id);
-            //var pdkDomain = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == idpdk);
             if (hdDomain == null)
             {
                 return NotFound("Không tìm thấy hợp đồng.");
@@ -211,6 +173,23 @@ namespace API.Controllers
             HopDongDTO hdDTO = CreateHDDTO(hdDomain);
 
             return Ok(hdDTO);
+        }
+
+        [HttpPut]
+        [Route("XacDinhGiaTriHopDong")]
+        public IActionResult XacDinhGiaTriHopDong([FromBody] XacDinhGiaTriHopDongDTO dto)
+        {
+            var hd = VHIDbContext.HopDong.FirstOrDefault(x => x.ID_HopDong == dto.id);
+
+            if (hd == null)
+            {
+                return NotFound("Không tìm thấy hợp đồng");
+            }
+            hd.GiaTriHopDong = dto.price;
+            VHIDbContext.SaveChanges();
+
+            HopDongDTO hd_dto = CreateHDDTO(hd);
+            return Ok(hd_dto);
         }
 
         [HttpDelete]
