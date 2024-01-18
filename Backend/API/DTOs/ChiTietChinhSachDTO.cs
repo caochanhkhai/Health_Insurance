@@ -8,8 +8,7 @@ namespace API.DTOs
         public int ID_GoiBaoHiem { get; set; }
         public int ID_ChinhSach { get; set; }
         public int STT { get; set; }
-        public decimal HanMucChiTra { get; set; }
-        public string DieuKienApDung { get; set; }
-        public string Mota { get; set; }
+        public DateTime NgayBatDay { get; set; }
+        public DateTime NgayKetThuc { get; set; }
     }
 }
