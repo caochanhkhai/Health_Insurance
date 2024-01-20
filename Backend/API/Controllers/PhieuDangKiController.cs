@@ -39,54 +39,124 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("userId:int")]
-        public IActionResult GetAllByUserId(int userId)
+        [Route("GetById")]
+        public IActionResult GetById(int id)
         {
-            var phieudk = VHIDbContext.PhieuDangKi.Where(x => x.KhachHangID_KhachHang == userId).ToList();
-
-            if (phieudk == null)
+            var pdk = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == id);
+            if (pdk == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy phiếu đăng ký.");
             }
+            PhieuDangKiDTO pdk_dto = CreatePhieuDKDTO(pdk);
 
-            var phieudk_dto = phieudk.Select(phieudk => new PhieuDangKiDTO
-                { 
-            ID_PhieuDangKi = phieudk.ID_PhieuDangKi,
-            TinhTrangDuyet = phieudk.TinhTrangDuyet,
-            DiaDiemKiKet = phieudk.DiaDiemKiKet,
-            ThoiGianKiKet = phieudk.ThoiGianKiKet,
-            ToKhaiSucKhoe = phieudk.ToKhaiSucKhoe,
-            ID_KhachHang = phieudk.KhachHangID_KhachHang,
-            ID_GoiBaoHiem = phieudk.GoiBaoHiemID_GoiBaoHiem,
-            ID_NhanVien = phieudk.NhanVienID_NhanVien
-        }).ToList();
-            return Ok(phieudk_dto);
+            return Ok(pdk_dto);
         }
 
         [HttpGet]
-        [Route("GetPhieuDangKyById/{id}")]
-        public IActionResult GetPhieuDangKyByID(int id)
+        [Route("GetByIdKhachHang")]
+        public IActionResult GetByIdkh(int idkh)
         {
-            var phieudk = VHIDbContext.PhieuDangKi.Where(x => x.ID_PhieuDangKi == id).ToList();
+            var kh = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == idkh);
 
-            if (phieudk == null)
+            if (kh == null)
             {
-                return NotFound("Không tìm thấy phiếu đăng ký");
+                return NotFound("Không tồn tại Khách hàng.");
             }
 
-            var phieudk_dto = phieudk.Select(phieudk => new PhieuDangKiDTO
+            var pdk = VHIDbContext.PhieuDangKi.Where(q => q.KhachHangID_KhachHang == idkh).ToList();
+
+            if (pdk == null || pdk.Count() == 0)
             {
-                ID_PhieuDangKi = phieudk.ID_PhieuDangKi,
-                TinhTrangDuyet = phieudk.TinhTrangDuyet,
-                DiaDiemKiKet = phieudk.DiaDiemKiKet,
-                ThoiGianKiKet = phieudk.ThoiGianKiKet,
-                ToKhaiSucKhoe = phieudk.ToKhaiSucKhoe,
-                ID_KhachHang = phieudk.KhachHangID_KhachHang,
-                ID_GoiBaoHiem = phieudk.GoiBaoHiemID_GoiBaoHiem,
-                ID_NhanVien = phieudk.NhanVienID_NhanVien
-            }).ToList();
-            return Ok(phieudk_dto);
+                return NotFound("Không tìm thấy Phiếu đăng ký tương ứng với Khách hàng.");
+            }
+
+            List<PhieuDangKiDTO> dspdkDTO = new List<PhieuDangKiDTO>();
+            foreach (var dk in pdk)
+            {
+                PhieuDangKiDTO pdk_dto = CreatePhieuDKDTO(dk);
+                dspdkDTO.Add(pdk_dto);
+            }
+
+            return Ok(dspdkDTO);
         }
+
+        [HttpGet]
+        [Route("GetByIdGoiBaoHiem")]
+        public IActionResult GetByIdgbh(int idgbh)
+        {
+            var gbh = VHIDbContext.GoiBaoHiem.FirstOrDefault(x => x.ID_GoiBaoHiem == idgbh);
+
+            if (gbh == null)
+            {
+                return NotFound("Không tồn tại Gói bảo hiểm.");
+            }
+
+            var pdk = VHIDbContext.PhieuDangKi.Where(q => q.GoiBaoHiemID_GoiBaoHiem == idgbh).ToList();
+
+            if (pdk == null || pdk.Count() == 0)
+            {
+                return NotFound("Không tìm thấy Phiếu đăng ký tương ứng với Gói bảo hiểm.");
+            }
+
+            List<PhieuDangKiDTO> dspdkDTO = new List<PhieuDangKiDTO>();
+            foreach (var dk in pdk)
+            {
+                PhieuDangKiDTO pdk_dto = CreatePhieuDKDTO(dk);
+                dspdkDTO.Add(pdk_dto);
+            }
+
+            return Ok(dspdkDTO);
+        }
+
+        //[HttpGet]
+        //[Route("userId:int")]
+        //public IActionResult GetAllByUserId(int userId)
+        //{
+        //    var phieudk = VHIDbContext.PhieuDangKi.Where(x => x.KhachHangID_KhachHang == userId).ToList();
+
+        //    if (phieudk == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var phieudk_dto = phieudk.Select(phieudk => new PhieuDangKiDTO
+        //        { 
+        //    ID_PhieuDangKi = phieudk.ID_PhieuDangKi,
+        //    TinhTrangDuyet = phieudk.TinhTrangDuyet,
+        //    DiaDiemKiKet = phieudk.DiaDiemKiKet,
+        //    ThoiGianKiKet = phieudk.ThoiGianKiKet,
+        //    ToKhaiSucKhoe = phieudk.ToKhaiSucKhoe,
+        //    ID_KhachHang = phieudk.KhachHangID_KhachHang,
+        //    ID_GoiBaoHiem = phieudk.GoiBaoHiemID_GoiBaoHiem,
+        //    ID_NhanVien = phieudk.NhanVienID_NhanVien
+        //}).ToList();
+        //    return Ok(phieudk_dto);
+        //}
+
+        //[HttpGet]
+        //[Route("GetPhieuDangKyById/{id}")]
+        //public IActionResult GetPhieuDangKyByID(int id)
+        //{
+        //    var phieudk = VHIDbContext.PhieuDangKi.Where(x => x.ID_PhieuDangKi == id).ToList();
+
+        //    if (phieudk == null)
+        //    {
+        //        return NotFound("Không tìm thấy phiếu đăng ký");
+        //    }
+
+        //    var phieudk_dto = phieudk.Select(phieudk => new PhieuDangKiDTO
+        //    {
+        //        ID_PhieuDangKi = phieudk.ID_PhieuDangKi,
+        //        TinhTrangDuyet = phieudk.TinhTrangDuyet,
+        //        DiaDiemKiKet = phieudk.DiaDiemKiKet,
+        //        ThoiGianKiKet = phieudk.ThoiGianKiKet,
+        //        ToKhaiSucKhoe = phieudk.ToKhaiSucKhoe,
+        //        ID_KhachHang = phieudk.KhachHangID_KhachHang,
+        //        ID_GoiBaoHiem = phieudk.GoiBaoHiemID_GoiBaoHiem,
+        //        ID_NhanVien = phieudk.NhanVienID_NhanVien
+        //    }).ToList();
+        //    return Ok(phieudk_dto);
+        //}
 
 
         [HttpPost]

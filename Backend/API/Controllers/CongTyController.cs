@@ -21,6 +21,10 @@ namespace API.Controllers
         public IActionResult GetAll()
         {
             var dsct = VHIDbContext.CongTy.ToList();
+            if (dsct.Count() == 0 || dsct == null)
+            {
+                return NotFound("Không tìm thấy công ty nào.");
+            }
             List<CongTyDTO> dsctDTO = new List<CongTyDTO>();
             foreach (var cty in dsct)
             {
@@ -28,6 +32,20 @@ namespace API.Controllers
                dsctDTO.Add(ctdto);
             }
             return Ok(dsctDTO);
+        }
+
+
+        [HttpGet]
+        [Route("id:int")]
+        public IActionResult GetById(int id)
+        {
+            var ct = VHIDbContext.CongTy.FirstOrDefault(x => x.ID_CongTy == id);
+            if (ct == null)
+            {
+                return NotFound();
+            }
+            var ct_dto = CreateCongTyDTO(ct);
+            return Ok(ct_dto);
         }
 
         [HttpPost]

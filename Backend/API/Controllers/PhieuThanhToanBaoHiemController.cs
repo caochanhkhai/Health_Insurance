@@ -25,6 +25,10 @@ namespace API.Controllers
         public IActionResult GetAll()
         {
             var dspttbh = VHIDbContext.PhieuThanhToanBaoHiem.ToList();
+            if (dspttbh == null || dspttbh.Count == 0)
+            {
+                return BadRequest("Không tồn tại Phiếu thanh toán bảo hiểm nào.");
+            }
             List<PhieuThanhToanBaoHiemDTO> dspttbhDTO = new List<PhieuThanhToanBaoHiemDTO>();
             foreach (var pttbh in dspttbh)
             {
@@ -45,6 +49,34 @@ namespace API.Controllers
             }
             var pttbh_dto = CreatePhieuThanhToanBaoHiemDTO(pttbh);
             return Ok(pttbh_dto);
+        }
+
+        [HttpGet]
+        [Route("GetByIdHopDong")]
+        public IActionResult GetByIdhd(int idhd)
+        {
+            var hd = VHIDbContext.HopDong.FirstOrDefault(x => x.ID_HopDong == idhd);
+
+            if (hd == null)
+            {
+                return NotFound("Không tồn tại Hợp đồng.");
+            }
+
+            var pttbh = VHIDbContext.PhieuThanhToanBaoHiem.Where(q => q.HopDongID_HopDong == idhd).ToList();
+
+            if (pttbh == null || pttbh.Count() == 0)
+            {
+                return NotFound("Không tìm thấy Hợp đồng tương ứng với Phiếu thanh toán bảo hiểm.");
+            }
+
+            List<PhieuThanhToanBaoHiemDTO> dspttbhDTO = new List<PhieuThanhToanBaoHiemDTO>();
+            foreach (var ttbh in pttbh)
+            {
+                PhieuThanhToanBaoHiemDTO pttbh_dto = CreatePhieuThanhToanBaoHiemDTO(ttbh);
+                dspttbhDTO.Add(pttbh_dto);
+            }
+
+            return Ok(dspttbhDTO);
         }
 
         [HttpPost]
