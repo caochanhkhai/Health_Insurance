@@ -87,12 +87,12 @@ namespace API.Controllers
             return Ok(updated_dltv_dto);
         }
 
-        [HttpPut]
-        [Route("UpdateNhanVien{id_dltv:int},{id_nv:int}")]
-        public IActionResult UpdateNhanVien([FromRoute] int id_dltv, [FromRoute] int id_nv)
+        [HttpPost]
+        [Route("UpdateNhanVien")]
+        public IActionResult UpdateNhanVien([FromBody] UpdateNhanVienDLTVDTO dto)
         {
-            var dltvDomain = VHIDbContext.DatLichTuVan.FirstOrDefault(x => x.ID_YeuCauTuVan == id_dltv);
-            var nhanVienDomain = VHIDbContext.NhanVien.FirstOrDefault(x=>x.ID_NhanVien == id_nv);
+            var dltvDomain = VHIDbContext.DatLichTuVan.FirstOrDefault(x => x.ID_YeuCauTuVan == dto.ID_YeuCauTuVan);
+            var nhanVienDomain = VHIDbContext.NhanVien.FirstOrDefault(x=>x.ID_NhanVien == dto.ID_NhanVien);
 
             if (dltvDomain == null)
             {
@@ -102,7 +102,7 @@ namespace API.Controllers
             {
                 return NotFound("Không tìm thấy nhân viên.");
             }
-            if(dltvDomain.TinhTrangDuyet!="Đã Duyệt")
+            if(dltvDomain.TinhTrangDuyet != "Đã Duyệt")
             {
                 return BadRequest("Tình trạng duyệt Yêu cầu tư vấn không hợp lệ: " + dltvDomain.TinhTrangDuyet);
             }

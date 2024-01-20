@@ -118,21 +118,23 @@ namespace API.Controllers
             return Ok(YeuCauChiTra_dto);
         }
 
-        [HttpPut("XuLyYeuCauChiTra/{id}")]
-        public IActionResult XuLyYeuCauChiTra(int id, string tinhTrangDuyet)
+        [HttpPost("DuyetYeuCauChiTra")]
+        public IActionResult DuyetYeuCauChiTra([FromBody] DuyetYeuCauChiTraDTO dto)
         {
-            var ycctDomain = VHIDbContext.YeuCauChiTra.FirstOrDefault(x => x.ID_YeuCauChiTra == id);
+            var ycctDomain = VHIDbContext.YeuCauChiTra.FirstOrDefault(x => x.ID_YeuCauChiTra == dto.ID_YeuCauChiTra);
 
             if (ycctDomain == null)
             {
                 return NotFound("Không tìm thấy yêu cầu chi trả.");
             }
-            if (tinhTrangDuyet != "Từ Chối" && tinhTrangDuyet != "Đã Duyệt")
+
+            if (dto.TinhTrangDuyet != "Từ Chối" && dto.TinhTrangDuyet != "Đã Duyệt")
             {
                 return BadRequest("Tình trạng duyệt không hợp lệ");
             }
+
             // Cập nhật tình trạng duyệt và lưu vào cơ sở dữ liệu
-            ycctDomain.TinhTrangDuyet = tinhTrangDuyet;
+            ycctDomain.TinhTrangDuyet = dto.TinhTrangDuyet;
             VHIDbContext.SaveChanges();
 
             YeuCauChiTraDTO ycctDTO = CreateYeuCauChiTraDTO(ycctDomain);
