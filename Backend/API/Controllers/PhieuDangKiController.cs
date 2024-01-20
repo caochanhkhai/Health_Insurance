@@ -20,6 +20,25 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("GetAll")]
+        public IActionResult GetAll()
+        {
+            var dspdkDomain = VHIDbContext.PhieuDangKi.ToList();
+            if (dspdkDomain == null || dspdkDomain.Count == 0)
+            {
+                return BadRequest("Không tồn tại Phiếu đăng ký nào.");
+            }
+            List<PhieuDangKiDTO> dspdkDTO = new List<PhieuDangKiDTO>();
+            foreach (var pdk in dspdkDomain)
+            {
+                PhieuDangKiDTO pdk_dto = CreatePhieuDKDTO(pdk);
+                dspdkDTO.Add(pdk_dto);
+            }
+
+            return Ok(dspdkDTO);
+        }
+
+        [HttpGet]
         [Route("userId:int")]
         public IActionResult GetAllByUserId(int userId)
         {
