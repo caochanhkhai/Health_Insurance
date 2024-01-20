@@ -21,9 +21,9 @@ namespace API.Controllers
         [Route("GetAll")]
         public IActionResult GetAll()
         {
-            var dsctcs = VHIDbContext.ChiTietChinhSach.ToList();
+            var dsctcs = VHIDbContext.ChiTietChinhSach.Where(x => x.NgayKetThuc == DateTime.Parse("0001-01-01")).ToList();
 
-            if(dsctcs == null || dsctcs.Count == 0)
+            if(dsctcs == null || dsctcs.Count() == 0)
             {
                 return BadRequest("Không tồn tại Chi Tiết Chính Sách nào.");
             }
@@ -96,28 +96,61 @@ namespace API.Controllers
             return Ok(ctcsDTOList);
         }
 
-        /*[HttpPut("ChinhSuaBaoHiem/{id}")]
-        public IActionResult ChinhSuaBaoHiem(int idgbh, int idcs, [FromBody] ChiTietChinhSachDTO dto)
+        [HttpPost]
+        [Route("ThemChinhSachChoGoiBaoHiem")]
+        public IActionResult ThemChinhSachChoGoiBaoHiem([FromBody] AddChiTietChinhSachDTO dto)
         {
-            var ctcsDomain = VHIDbContext.ChiTietChinhSach.FirstOrDefault(x => x.ID == idcs);
-            var csDomain = VHIDbContext.ChinhSach.FirstOrDefault(x => x.ID_ChinhSach == idcs);
-            var bhDomain = VHIDbContext.GoiBaoHiem.FirstOrDefault(x => x.ID_GoiBaoHiem == idgbh);
-            if (bhDomain == null || bhDomain == null)
+            var gbhDomain = VHIDbContext.GoiBaoHiem.FirstOrDefault(x => x.ID_GoiBaoHiem== dto.ID_GoiBaoHiem);
+            var csDomain = VHIDbContext.ChinhSach.FirstOrDefault(x => x.ID_ChinhSach == dto.ID_ChinhSach);
+
+            if (gbhDomain == null)
             {
-                return NotFound("Không tìm thấy.");
+                return NotFound("Không tồn tại Gói bảo hiểm.");
             }
 
-            // Cập nhật và lưu vào cơ sở dữ liệu
-            ctcsDomain.HanMucChiTra = dto.HanMucChiTra;
-            ctcsDomain.DieuKienApDung = dto.DieuKienApDung;
-            ctcsDomain.Mota = dto.Mota;
+            if (csDomain == null)
+            {
+                return NotFound("Không tồn tại Chính sách.");
+            }
+
+            ChiTietChinhSach ctcs = CreateChiTietChinhSachDomain(dto, gbhDomain, csDomain);
+            VHIDbContext.ChiTietChinhSach.Add(ctcs);
             VHIDbContext.SaveChanges();
 
-            ChiTietChinhSachDTO ctcsDTO = CreateCTCSDTO(ctcsDomain);
+            ChiTietChinhSachDTO ctcsDTO = CreateChiTietChinhSachDTO(ctcs);
 
             return Ok(ctcsDTO);
-        }*/
+        }
 
+        [HttpPost("VoHieuHoaChiTietChinhSach")]
+        public IActionResult VoHieuHoaChiTietChinhSach([FromBody] UpdateNgayKetThucCTTCDTO dto)
+        {
+            var ctcsDomain = VHIDbContext.ChiTietChinhSach.FirstOrDefault(x => x.ID == dto.ID);
+
+            if (ctcsDomain == null)
+            {
+                return NotFound("Không tìm thấy Chi Tiết Chính Sách.");
+            }
+
+            //Update Ngày Kết Thúc cho Chi tiết chính sách
+            ctcsDomain.NgayKetThuc = dto.NgayKetThuc;
+            VHIDbContext.SaveChanges();
+
+            ChiTietChinhSachDTO ctcsDTO = CreateChiTietChinhSachDTO(ctcsDomain);
+
+            return Ok(ctcsDTO);
+        }
+
+
+        private static ChiTietChinhSach CreateChiTietChinhSachDomain(AddChiTietChinhSachDTO dto, GoiBaoHiem? gbhDomain, ChinhSach? csDomain)
+        {
+            return new ChiTietChinhSach()
+            {
+                GoiBaoHiem = gbhDomain,
+                ChinhSach = csDomain,
+                NgayBatDau = dto.NgayBatDau
+            };
+        }
 
         private static ChiTietChinhSachDTO CreateChiTietChinhSachDTO(ChiTietChinhSach? ctcs)
         {

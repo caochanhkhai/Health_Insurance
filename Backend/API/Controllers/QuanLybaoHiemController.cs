@@ -128,7 +128,7 @@ namespace API.Controllers
             return Ok(QuanLyBaoHiem_dto);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("CapNhatHanMucSuDung{id:int}")]
         public IActionResult UpdateHanMucSuDung([FromRoute] int id, decimal HanMucSuDung)
         {

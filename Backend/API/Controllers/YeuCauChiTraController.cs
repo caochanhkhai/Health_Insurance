@@ -143,9 +143,9 @@ namespace API.Controllers
         }
 
 
-        [HttpPut]
-        [Route("CapNhatTinhTrangDuyet{id:int}")]
-        public IActionResult UpdateTinhTrangDuyet([FromRoute] int id, string tinhTrangDuyet)
+        [HttpPost]
+        [Route("CapNhatTinhTrangDuyet")]
+        public IActionResult UpdateTinhTrangDuyet(int id, string tinhTrangDuyet)
         {
             var ycctDomain = VHIDbContext.YeuCauChiTra.FirstOrDefault(x => x.ID_YeuCauChiTra == id);
             if (ycctDomain == null)
