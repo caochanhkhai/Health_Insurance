@@ -136,15 +136,19 @@ namespace API.Controllers
             return Ok(phieudk_dto);
         }
 
-        [HttpPut("ThemNhanVienChoPhieuDangKi")]
-        public IActionResult ThemNhanVienChoPhieuDangKi(int idpdk, int idnv)
+        [HttpPost("ThemNhanVienChoPhieuDangKi")]
+        public IActionResult ThemNhanVienChoPhieuDangKi([FromBody] UpdateNhanVienPhieuDangKiDTO dto)
         {
-            var phieuDangKi = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == idpdk);
-            var nhanVien = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == idnv);
+            var phieuDangKi = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == dto.ID_PhieuDangKi);
+            var nhanVien = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == dto.ID_NhanVien);
 
             if (phieuDangKi == null)
             {
                 return NotFound("Không tìm thấy phiếu đăng ký.");
+            }
+            if (phieuDangKi.NhanVienID_NhanVien != null)
+            {
+                return BadRequest("Đã có Nhân viên cho Phiếu đăng kí này. ID nhân viên: " + phieuDangKi.NhanVienID_NhanVien);
             }
             if (nhanVien == null)
             {

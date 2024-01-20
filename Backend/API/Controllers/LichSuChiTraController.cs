@@ -79,59 +79,47 @@ namespace API.Controllers
             return Ok(dslsctDTO);
         }
 
-        private static LichSuChiTraDTO CreateLichSuChiTraDTO(LichSuChiTra? lsct)
-        {
-            return new LichSuChiTraDTO()
-            {
-                ID = lsct.ID,
-                ID_YeuCauChiTra = lsct.YeuCauChiTraID_YeuCauChiTra,
-                TenBenhVien = lsct.TenBenhVien,
-                ThoiGianChiTra = lsct.ThoiGianChiTra,
-                SoTienChiTra = lsct.SoTienChiTra
-            };
-        }
 
         [HttpPost]
-        [Route("ThemLichSuChiTra{idycct:int},{soTienChiTra:decimal}")]
-        public IActionResult CreateLichSuChiTra(int idycct, [FromBody] DateTimeRequestModel model, decimal soTienChiTra)
+        [Route("ThemLichSuChiTra")]
+        public IActionResult CreateLichSuChiTra( [FromBody] AddLichSuChiTraDTO dto)
         {
-            var ycct = VHIDbContext.YeuCauChiTra.FirstOrDefault(x => x.ID_YeuCauChiTra == idycct);
+            var ycct = VHIDbContext.YeuCauChiTra.FirstOrDefault(x => x.ID_YeuCauChiTra == dto.ID_YeuCauChiTra);
             if (ycct == null)
             {
                 return NotFound("Không tìm thấy yêu cầu chi trả.");
             }
             if (ycct.TinhTrangDuyet != "Đã Duyệt")
             {
-                return BadRequest("Tình trạng duyệt của Yêu cầu chi trả không hợp lệ.");
+                return BadRequest("Tình trạng duyệt của Yêu cầu chi trả không hợp lệ: "+ ycct.TinhTrangDuyet);
             }
-            var lsct = VHIDbContext.LichSuChiTra.FirstOrDefault(x => x.YeuCauChiTraID_YeuCauChiTra == idycct);
+            var lsct = VHIDbContext.LichSuChiTra.FirstOrDefault(x => x.YeuCauChiTraID_YeuCauChiTra == dto.ID_YeuCauChiTra);
             if (lsct != null)
             {
                 return BadRequest("Đã tồn tại lịch sử chi trả cho yêu cầu chi trả này.");
             }
-            LichSuChiTra lsctDomain = new LichSuChiTra()
-            {
-                YeuCauChiTra = ycct,
-                TenBenhVien = ycct.NoiDieuTri,
-                ThoiGianChiTra = model.ThoiGianChiTra,
-                SoTienChiTra = soTienChiTra
-            };
+            LichSuChiTra lsctDomain = CreateLichSuChiTraDomain(dto, ycct);
 
             VHIDbContext.LichSuChiTra.Add(lsctDomain);
             VHIDbContext.SaveChanges();
 
-            LichSuChiTraDTO lsctDTO = CreateLichSuChiTraDomain(lsctDomain);
+            LichSuChiTraDTO lsctDTO = CreateLichSuChiTraDTO(lsctDomain);
 
             return Ok(lsctDTO);
         }
 
-        public class DateTimeRequestModel
+        private static LichSuChiTra CreateLichSuChiTraDomain(AddLichSuChiTraDTO dto, YeuCauChiTra? ycct)
         {
-            public DateTime ThoiGianChiTra { get; set; }
-            
+            return new LichSuChiTra()
+            {
+                YeuCauChiTra = ycct,
+                TenBenhVien = ycct.NoiDieuTri,
+                ThoiGianChiTra = dto.ThoiGianChiTra,
+                SoTienChiTra = dto.SoTienChiTra
+            };
         }
 
-        private static LichSuChiTraDTO CreateLichSuChiTraDomain(LichSuChiTra lsctDomain)
+        private static LichSuChiTraDTO CreateLichSuChiTraDTO(LichSuChiTra lsctDomain)
         {
             return new LichSuChiTraDTO()
             {
