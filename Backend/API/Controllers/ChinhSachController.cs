@@ -1,4 +1,4 @@
-﻿/*using API.Data;
+﻿using API.Data;
 using API.Domain;
 using API.DTOs;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +22,12 @@ namespace API.Controllers
         {
             var dscsDomain = VHIDbContext.ChinhSach.ToList();
             List<ChinhSachDTO> dscsDTO = new List<ChinhSachDTO>();
+
+            if (dscsDomain == null || dscsDomain.Count == 0)
+            {
+                return BadRequest("Không tồn tại Chính Sách nào.");
+            }
+
             foreach (var cs in dscsDomain)
             {
                 ChinhSachDTO cs_dto = CreateChinhSachDTO(cs);
@@ -32,7 +38,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("id")]
+        [Route("GetById")]
         public IActionResult GetById(int id)
         {
             var cs = VHIDbContext.ChinhSach.FirstOrDefault(x => x.ID_ChinhSach == id);
@@ -47,12 +53,11 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("ThemChinhSach")]
-        public IActionResult ThemCS( [FromBody] ChinhSachDTO dto)
+        public IActionResult ThemCS([FromBody] ChinhSachDTO dto)
         {
 
             ChinhSach cs_Domain = new ChinhSach()
             {
-                STT = dto.STT,
                 TenChinhSach = dto.TenChinhSach,
                 ThoiGianPhatHanh = dto.ThoiGianPhatHanh
             };
@@ -71,10 +76,9 @@ namespace API.Controllers
             return new ChinhSachDTO()
             {
                 ID_ChinhSach = cs.ID_ChinhSach,
-                STT = cs.STT,
                 TenChinhSach = cs.TenChinhSach,
                 ThoiGianPhatHanh = cs.ThoiGianPhatHanh
             };
         }
     }
-}*/
+}

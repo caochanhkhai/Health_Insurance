@@ -20,8 +20,75 @@ namespace API.Controllers
         [Route("GetAll")]
         public IActionResult GetAll()
         {
-            var lsct = VHIDbContext.LichSuChiTra.ToList();
-            return Ok(lsct);
+            var lsctDomain = VHIDbContext.LichSuChiTra.ToList();
+            if (lsctDomain == null || lsctDomain.Count() == 0)
+            {
+                return NotFound("Không tồn tại Lịch sử chi trả nào.");
+            }
+
+            List<LichSuChiTraDTO> dslsctDTO = new List<LichSuChiTraDTO>();
+            foreach (var lsct in lsctDomain)
+            {
+                LichSuChiTraDTO lsct_dto = CreateLichSuChiTraDTO(lsct);
+                dslsctDTO.Add(lsct_dto);
+            }
+            return Ok(dslsctDTO);
+        }
+
+        [HttpGet]
+        [Route("GetById")]
+        public IActionResult GetById(int id)
+        {
+            var lsct = VHIDbContext.LichSuChiTra.FirstOrDefault(x => x.ID == id);
+
+            if (lsct == null)
+            {
+                return NotFound("Không tìm thấy Lịch Sử Chi Trả.");
+            }
+
+            var lsct_dto = CreateLichSuChiTraDTO(lsct);
+
+            return Ok(lsct_dto);
+        }
+
+        [HttpGet]
+        [Route("GetByIdYeuCauChiTra")]
+        public IActionResult GetByIdycct(int idycct)
+        {
+            var ycct = VHIDbContext.YeuCauChiTra.FirstOrDefault(x => x.ID_YeuCauChiTra == idycct);
+
+            if (ycct == null)
+            {
+                return NotFound("Không tồn tại Yêu Cầu Chi Trả.");
+            }
+
+            var lsct = VHIDbContext.LichSuChiTra.Where(q => q.YeuCauChiTraID_YeuCauChiTra == idycct).ToList();
+
+            if (lsct == null || lsct.Count() == 0)
+            {
+                return NotFound("Không tìm thấy Quản lý bảo hiểm tương ứng với Khách hàng.");
+            }
+
+            List<LichSuChiTraDTO> dslsctDTO = new List<LichSuChiTraDTO>();
+            foreach (var bh in lsct)
+            {
+                LichSuChiTraDTO lsct_dto = CreateLichSuChiTraDTO(bh);
+                dslsctDTO.Add(lsct_dto);
+            }
+
+            return Ok(dslsctDTO);
+        }
+
+        private static LichSuChiTraDTO CreateLichSuChiTraDTO(LichSuChiTra? lsct)
+        {
+            return new LichSuChiTraDTO()
+            {
+                ID = lsct.ID,
+                ID_YeuCauChiTra = lsct.YeuCauChiTraID_YeuCauChiTra,
+                TenBenhVien = lsct.TenBenhVien,
+                ThoiGianChiTra = lsct.ThoiGianChiTra,
+                SoTienChiTra = lsct.SoTienChiTra
+            };
         }
 
         [HttpPost]

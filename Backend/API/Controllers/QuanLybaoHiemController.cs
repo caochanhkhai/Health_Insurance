@@ -22,7 +22,10 @@ namespace API.Controllers
         public IActionResult GetAll()
         {
             var qlBH = VHIDbContext.QuanLyBaoHiem.ToList();
-
+            if (qlBH == null || qlBH.Count() == 0)
+            {
+                return NotFound("Không tồn tại Quản Lý Bảo Hiểm nào.");
+            }
             List<QuanLyBaoHiemDTO> dsqlbhDTO = new List<QuanLyBaoHiemDTO>();
             foreach (var qlbh in qlBH)
             {
@@ -33,14 +36,14 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("id:int")]
+        [Route("GetById")]
         public IActionResult GetById(int id)
         {
             var qlbh = VHIDbContext.QuanLyBaoHiem.FirstOrDefault(x => x.ID == id);
 
-            if (qlbh == null)
+            if (qlbh == null )
             {
-                return NotFound();
+                return NotFound("Không tìm thấy Quản Lý Bảo Hiểm.");
             }
 
             var qlbh_dto = CreateQuanLyBaoHiemDTO(qlbh);
@@ -49,15 +52,21 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("idkh:int")]
+        [Route("GetByIdKhachHang")]
         public IActionResult GetByIdKh(int idkh)
         {
-            string query = $"SELECT * FROM QuanLyBaoHiem WHERE KhachHangID_KhachHang = '{idkh}' ";
-            var qlbh = VHIDbContext.QuanLyBaoHiem.FromSqlRaw(query).ToList();
+            var kh = VHIDbContext.KhachHang.FirstOrDefault(x=>x.ID_KhachHang == idkh);
 
-            if (qlbh == null)
+            if (kh == null)
             {
-                return NotFound("Không tìm thấy kết quả nào.");
+                return NotFound("Không tồn tại khách hàng.");
+            }
+
+            var qlbh = VHIDbContext.QuanLyBaoHiem.Where(q => q.KhachHangID_KhachHang == idkh).ToList();
+
+            if (qlbh == null || qlbh.Count() == 0)
+            {
+                return NotFound("Không tìm thấy Quản lý bảo hiểm tương ứng với Khách hàng.");
             }
 
             List<QuanLyBaoHiemDTO> dsqlbhDTO = new List<QuanLyBaoHiemDTO>();
@@ -71,15 +80,21 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("idgbh:int")]
+        [Route("GetByIdGoiBaoHiem")]
         public IActionResult GetByIdgbh(int idgbh)
         {
-            string query = $"SELECT * FROM QuanLyBaoHiem WHERE GoiBaoHiemID_GoiBaoHiem = '{idgbh}' ";
-            var qlbh = VHIDbContext.QuanLyBaoHiem.FromSqlRaw(query).ToList();
+            var kh = VHIDbContext.GoiBaoHiem.FirstOrDefault(x => x.ID_GoiBaoHiem == idgbh);
 
-            if (qlbh == null)
+            if (kh == null)
             {
-                return NotFound("Không tìm thấy kết quả nào.");
+                return NotFound("Không tồn tại Gói bảo hiểm.");
+            }
+
+            var qlbh = VHIDbContext.QuanLyBaoHiem.Where(q => q.GoiBaoHiemID_GoiBaoHiem == idgbh).ToList();
+
+            if (qlbh == null || qlbh.Count() == 0)
+            {
+                return NotFound("Không tìm thấy Quản lý bảo hiểm tương ứng với Gói bảo hiểm.");
             }
 
             List<QuanLyBaoHiemDTO> dsqlbhDTO = new List<QuanLyBaoHiemDTO>();

@@ -40,17 +40,45 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("id:int")]
+        [Route("GetById")]
         public IActionResult GetById(int id)
         {
             var ycct = VHIDbContext.YeuCauChiTra.FirstOrDefault(x => x.ID_YeuCauChiTra == id);
             if (ycct == null)
             {
-                return NotFound("Không tìm thấy Yêu cầu bảo hiểm.");
+                return NotFound("Không tìm thấy Yêu cầu chi trả.");
             }
             YeuCauChiTraDTO yctv_dto = CreateYeuCauChiTraDTO(ycct);
 
             return Ok(yctv_dto);
+        }
+
+        [HttpGet]
+        [Route("GetByIdQuanLyBaoHiem")]
+        public IActionResult GetYCCTByIdQuanLyBaoHiem(int QLBHID)
+        {
+            var qlbh = VHIDbContext.QuanLyBaoHiem.FirstOrDefault(x=>x.ID == QLBHID);
+
+            if (qlbh == null)
+            {
+                return NotFound("Không tồn tại Quản Lý Bảo Hiểm.");
+            }
+
+            var ycctList = VHIDbContext.YeuCauChiTra.Where(ycct => ycct.QLBHID == QLBHID).ToList();
+
+            if (ycctList.Count() == 0 || ycctList == null)
+            {
+                return NotFound("Không tìm thấy Yêu cầu chi trả ứng với Quản lý bảo hiểm.");
+            }
+
+            List<YeuCauChiTraDTO> dsycctDTO = new List<YeuCauChiTraDTO>();
+            foreach (var ycct in ycctList)
+            {
+                var YeuCauChiTraDTO = CreateYeuCauChiTraDTO(ycct);
+                dsycctDTO.Add(YeuCauChiTraDTO);
+            }
+
+            return Ok(dsycctDTO);
         }
 
         [HttpPost]

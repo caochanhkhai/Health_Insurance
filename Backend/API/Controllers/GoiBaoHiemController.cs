@@ -22,6 +22,10 @@ namespace API.Controllers
         {
             var dsgbhDomain = VHIDbContext.GoiBaoHiem.ToList();
             List<GoiBaoHiemDTO> dsgbhDTO = new List<GoiBaoHiemDTO>();
+            if (dsgbhDomain == null || dsgbhDomain.Count == 0)
+            {
+                return BadRequest("Không tồn tại Gói Bảo Hiểm nào.");
+            }
             foreach (var gbh in dsgbhDomain)
             {
                 GoiBaoHiemDTO gbh_dto = CreateGoiBaoHiemDTO(gbh);
@@ -32,13 +36,13 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("id")]
+        [Route("GetById")]
         public IActionResult GetById(int id)
         {
             var gbh = VHIDbContext.GoiBaoHiem.FirstOrDefault(x => x.ID_GoiBaoHiem == id);
             if (gbh == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy gói bảo hiểm.");
             }
             GoiBaoHiemDTO gbh_dto = CreateGoiBaoHiemDTO(gbh);
 
