@@ -76,7 +76,10 @@ namespace API.Controllers
             {
                 ID_ChinhSach = cs.ID_ChinhSach,
                 TenChinhSach = cs.TenChinhSach,
-                ThoiGianPhatHanh = cs.ThoiGianPhatHanh
+                ThoiGianPhatHanh = cs.ThoiGianPhatHanh,
+                HanMucChiTra = cs.HanMucChiTra,
+                DieuKienApDung = cs.DieuKienApDung,
+                Mota = cs.Mota
             };
         }
     }
