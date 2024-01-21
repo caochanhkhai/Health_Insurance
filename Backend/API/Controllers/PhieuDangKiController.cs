@@ -108,6 +108,35 @@ namespace API.Controllers
             return Ok(dspdkDTO);
         }
 
+        [HttpGet]
+        [Route("GetByIdNhanVien")]
+        public IActionResult GetByIdnv(int idnv)
+        {
+            var nv = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == idnv);
+
+            if (nv == null)
+            {
+                return NotFound("Không tồn tại Nhân viên.");
+            }
+
+            var pdk = VHIDbContext.PhieuDangKi.Where(q => q.NhanVienID_NhanVien == idnv).ToList();
+
+            if (pdk == null || pdk.Count() == 0)
+            {
+                return NotFound("Không tìm thấy Phiếu đăng ký tương ứng với Nhân viên.");
+            }
+
+            List<PhieuDangKiDTO> dspdkDTO = new List<PhieuDangKiDTO>();
+            foreach (var dk in pdk)
+            {
+                PhieuDangKiDTO pdk_dto = CreatePhieuDKDTO(dk);
+                dspdkDTO.Add(pdk_dto);
+            }
+
+            return Ok(dspdkDTO);
+        }
+
+
         //[HttpGet]
         //[Route("userId:int")]
         //public IActionResult GetAllByUserId(int userId)

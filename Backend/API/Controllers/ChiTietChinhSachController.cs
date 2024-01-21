@@ -21,9 +21,49 @@ namespace API.Controllers
         [Route("GetAll")]
         public IActionResult GetAll()
         {
-            var dsctcs = VHIDbContext.ChiTietChinhSach.Where(x => x.NgayKetThuc == DateTime.Parse("0001-01-01")).ToList();
+            var dsctcs = VHIDbContext.ChiTietChinhSach.ToList();
 
             if(dsctcs == null || dsctcs.Count() == 0)
+            {
+                return BadRequest("Không tồn tại Chi Tiết Chính Sách nào.");
+            }
+
+            List<ChiTietChinhSachDTO> dsctcsDTO = new List<ChiTietChinhSachDTO>();
+            foreach (var ctcs in dsctcs)
+            {
+                ChiTietChinhSachDTO ctcs_dto = CreateChiTietChinhSachDTO(ctcs);
+                dsctcsDTO.Add(ctcs_dto);
+            }
+            return Ok(dsctcsDTO);
+        }
+
+        [HttpGet]
+        [Route("GetChiTietChinhSachConHieuLuc")]
+        public IActionResult GetChiTietChinhSachConHieuLuc()
+        {
+            var dsctcs = VHIDbContext.ChiTietChinhSach.Where(x => x.NgayKetThuc == DateTime.Parse("0001-01-01")).ToList();
+
+            if (dsctcs == null || dsctcs.Count() == 0)
+            {
+                return BadRequest("Không tồn tại Chi Tiết Chính Sách nào.");
+            }
+
+            List<ChiTietChinhSachDTO> dsctcsDTO = new List<ChiTietChinhSachDTO>();
+            foreach (var ctcs in dsctcs)
+            {
+                ChiTietChinhSachDTO ctcs_dto = CreateChiTietChinhSachDTO(ctcs);
+                dsctcsDTO.Add(ctcs_dto);
+            }
+            return Ok(dsctcsDTO);
+        }
+
+        [HttpGet]
+        [Route("GetChiTietChinhSachHetHieuLuc")]
+        public IActionResult GetChiTietChinhSachHetHieuLuc()
+        {
+            var dsctcs = VHIDbContext.ChiTietChinhSach.Where(x => x.NgayKetThuc != DateTime.Parse("0001-01-01")).ToList();
+
+            if (dsctcs == null || dsctcs.Count() == 0)
             {
                 return BadRequest("Không tồn tại Chi Tiết Chính Sách nào.");
             }

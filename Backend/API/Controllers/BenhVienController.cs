@@ -49,6 +49,26 @@ namespace API.Controllers
             return Ok(bv_dto);
         }
 
+        [HttpPost]
+        [Route("ThemBenhVien")]
+        public IActionResult Thembv([FromBody] AddBenhVienDTO dto)
+        {
+            BenhVien bv_Domain = new BenhVien()
+            {
+                TenBenhVien = dto.TenBenhVien,
+                DiaChi = dto.DiaChi,
+                Email = dto.Email,
+                SDT = dto.SDT
+            };
+
+            VHIDbContext.BenhVien.Add(bv_Domain);
+            VHIDbContext.SaveChanges();
+
+            BenhVienDTO bvDTO = CreateBenhVienDTO(bv_Domain);
+
+            return Ok(bvDTO);
+        }
+
         private static BenhVienDTO CreateBenhVienDTO(BenhVien? bv)
         {
             return new BenhVienDTO()
