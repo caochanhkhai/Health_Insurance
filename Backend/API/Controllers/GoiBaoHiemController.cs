@@ -36,6 +36,25 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("GetAllGoiBaoHiemDangPhatHanh")]
+        public IActionResult GetAllGoiBaoHiemDangPhatHanh()
+        {
+            var dsgbhDomain = VHIDbContext.GoiBaoHiem.Where(x=>x.TinhTrang == "Đang Phát Hành").ToList();
+            List<GoiBaoHiemDTO> dsgbhDTO = new List<GoiBaoHiemDTO>();
+            if (dsgbhDomain == null || dsgbhDomain.Count == 0)
+            {
+                return BadRequest("Không tồn tại Gói Bảo Hiểm nào.");
+            }
+            foreach (var gbh in dsgbhDomain)
+            {
+                GoiBaoHiemDTO gbh_dto = CreateGoiBaoHiemDTO(gbh);
+                dsgbhDTO.Add(gbh_dto);
+            }
+
+            return Ok(dsgbhDTO);
+        }
+
+        [HttpGet]
         [Route("GetById")]
         public IActionResult GetById(int id)
         {

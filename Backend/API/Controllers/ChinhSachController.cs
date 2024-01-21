@@ -58,7 +58,10 @@ namespace API.Controllers
             ChinhSach cs_Domain = new ChinhSach()
             {
                 TenChinhSach = dto.TenChinhSach,
-                ThoiGianPhatHanh = dto.ThoiGianPhatHanh
+                ThoiGianPhatHanh = dto.ThoiGianPhatHanh,
+                HanMucChiTra = dto.HanMucChiTra,
+                DieuKienApDung = dto.DieuKienApDung,
+                Mota = dto.Mota
             };
 
             VHIDbContext.ChinhSach.Add(cs_Domain);
