@@ -91,6 +91,35 @@ namespace API.Controllers
             return Ok(bv_gbhDTOList);
         }
 
+        [HttpPost]
+        [Route("ThemBenhVienChoGoiBaoHiem")]
+        public IActionResult ThemBenhVienChoGoiBaoHiem([FromBody] AddBenhVienGoiBaoHiemDTO dto)
+        {
+            var gbhDomain = VHIDbContext.GoiBaoHiem.FirstOrDefault(x => x.ID_GoiBaoHiem == dto.ID_GoiBaoHiem);
+            var bvDomain = VHIDbContext.BenhVien.FirstOrDefault(x => x.ID_BenhVien == dto.ID_BenhVien);
+
+            if (gbhDomain == null)
+            {
+                return NotFound("Không tồn tại Gói bảo hiểm.");
+            }
+
+            if (bvDomain == null)
+            {
+                return NotFound("Không tồn tại Bệnh viện.");
+            }
+
+            BenhVien_GoiBaoHiem bv_gbh = new BenhVien_GoiBaoHiem()
+            {
+                BenhVien = bvDomain,
+                GoiBaoHiem = gbhDomain
+            };
+            VHIDbContext.BenhVien_GoiBaoHiem.Add(bv_gbh);
+            VHIDbContext.SaveChanges();
+
+            BenhVien_GoiBaoHiemDTO bv_gbhDTO = CreateBenhVien_GoiBaoHiemDTO(bv_gbh);
+
+            return Ok(bv_gbhDTO);
+        }
         private static BenhVien_GoiBaoHiemDTO CreateBenhVien_GoiBaoHiemDTO(BenhVien_GoiBaoHiem? bv_gbh)
         {
             return new BenhVien_GoiBaoHiemDTO()
