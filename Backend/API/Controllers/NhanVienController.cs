@@ -89,6 +89,47 @@ namespace API.Controllers
             return Ok(dsnvDTO);
         }
 
+        [HttpGet]
+        [Route("id:int")]
+        public IActionResult GetById(int id)
+        {
+            var nv = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == id);
+            if (nv == null)
+            {
+                return NotFound();
+            }
+            var nv_dto = CreateNhanVienDTO(nv);
+            return Ok(nv_dto);
+        }
+
+        [HttpGet]
+        [Route("GetByIdNhanVien1")]
+        public IActionResult GetByIdtk(int idtk)
+        {
+            var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == idtk);
+
+            if (tk == null)
+            {
+                return NotFound("Không tồn tại Tài khoản.");
+            }
+
+            var dsnv = VHIDbContext.NhanVien.Where(q => q.TaiKhoanID_TaiKhoan == idtk).ToList();
+
+            if (dsnv == null || dsnv.Count() == 0)
+            {
+                return NotFound("Không tìm thấy Tài khoản tương ứng với Nhân viên.");
+            }
+
+            List<NhanVienDTO> dsnvDTO = new List<NhanVienDTO>();
+            foreach (var nv in dsnv)
+            {
+                NhanVienDTO dsnv_dto = CreateNhanVienDTO(nv);
+                dsnvDTO.Add(dsnv_dto);
+            }
+
+            return Ok(dsnvDTO);
+        }
+
         [HttpPost]
         [Route("ThemNhanVien")]
         public IActionResult ThemNhanVien([FromBody] AddNhanVienDTO dto)

@@ -27,6 +27,11 @@ namespace API.Controllers
         public IActionResult GetAll()
         {
             var dskh = VHIDbContext.KhachHang.ToList();
+            if (dskh.Count() == 0 || dskh == null)
+            {
+                return NotFound("Không tìm thấy Khách hàng nào.");
+            }
+
             List<KhachHangDTO> dskhDTO = new List<KhachHangDTO>();
             foreach (var khachHang in dskh)
             {
@@ -43,30 +48,86 @@ namespace API.Controllers
             var kh = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == id);
             if (kh == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy Khách hàng.");
             }
             KhachHangDTO kh_dto = CreateKHDTO(kh, kh.CongTyID_CongTy,kh.TaiKhoanID_TaiKhoan);
             return Ok(kh_dto);
         }
 
         [HttpGet]
-        [Route("idtk:int")]
+        [Route("GetByIdTaiKhoan")]
         public IActionResult GetByIdtk(int idtk)
         {
-            var kh = VHIDbContext.KhachHang.FirstOrDefault(x => x.TaiKhoanID_TaiKhoan == idtk);
             var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == idtk);
-            if(tk == null)
+
+            if (tk == null)
             {
-                return NotFound("Không tồn tại tài khoản");
+                return NotFound("Không tồn tại Tài khoản.");
             }
-            if (kh == null)
+
+            var dskh = VHIDbContext.KhachHang.Where(q => q.TaiKhoanID_TaiKhoan == idtk).ToList();
+
+            if (dskh == null || dskh.Count() == 0)
             {
-                return NotFound("Không tìm thấy khách hàng với tài khoản tương ứng");
+                return NotFound("Không tìm thấy Tài khoản tương ứng với Khách hàng.");
             }
-            KhachHangDTO kh_dto = CreateKHDTO(kh,kh.CongTyID_CongTy,kh.TaiKhoanID_TaiKhoan);
-            
-            return Ok(kh_dto);
+
+            List<KhachHangDTO> dskhDTO = new List<KhachHangDTO>();
+            foreach (var kh in dskh)
+            {
+                KhachHangDTO kh_dto = CreateKHDTO(kh, kh.CongTyID_CongTy, kh.TaiKhoanID_TaiKhoan);
+                dskhDTO.Add(kh_dto);
+            }
+
+            return Ok(dskhDTO);
         }
+
+        [HttpGet]
+        [Route("GetByIdCongty")]
+        public IActionResult GetByIdct(int idct)
+        {
+            var nv = VHIDbContext.CongTy.FirstOrDefault(x => x.ID_CongTy == idct);
+
+            if (nv == null)
+            {
+                return NotFound("Không tồn tại Công ty.");
+            }
+
+            var dskh = VHIDbContext.KhachHang.Where(q => q.CongTyID_CongTy == idct).ToList();
+
+            if (dskh == null || dskh.Count() == 0)
+            {
+                return NotFound("Không tìm thấy Công ty tương ứng với Khách hàng.");
+            }
+
+            List<KhachHangDTO> dskhDTO = new List<KhachHangDTO>();
+            foreach (var kh in dskh)
+            {
+                KhachHangDTO kh_dto = CreateKHDTO(kh, kh.CongTyID_CongTy, kh.TaiKhoanID_TaiKhoan);
+                dskhDTO.Add(kh_dto);
+            }
+
+            return Ok(dskhDTO);
+        }
+
+        //[HttpGet]
+        //[Route("idtk:int")]
+        //public IActionResult GetByIdtk(int idtk)
+        //{
+        //    var kh = VHIDbContext.KhachHang.FirstOrDefault(x => x.TaiKhoanID_TaiKhoan == idtk);
+        //    var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == idtk);
+        //    if(tk == null)
+        //    {
+        //        return NotFound("Không tồn tại tài khoản");
+        //    }
+        //    if (kh == null)
+        //    {
+        //        return NotFound("Không tìm thấy khách hàng với tài khoản tương ứng");
+        //    }
+        //    KhachHangDTO kh_dto = CreateKHDTO(kh,kh.CongTyID_CongTy,kh.TaiKhoanID_TaiKhoan);
+
+        //    return Ok(kh_dto);
+        //}
 
         [HttpPost]
         [Route("ThemKhachHang")]
@@ -158,6 +219,7 @@ namespace API.Controllers
             KhachHangDTO kh_dto = CreateKHDTO(khDomain, khDomain.CongTyID_CongTy, khDomain.TaiKhoanID_TaiKhoan);
             return Ok(kh_dto);
         }
+
 
         private static KhachHang CreateKHDomain(AddKhachHangDTO dto,  TaiKhoan? taiKhoan)
         {

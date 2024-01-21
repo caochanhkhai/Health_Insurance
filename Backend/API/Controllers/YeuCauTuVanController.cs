@@ -21,6 +21,10 @@ namespace API.Controllers
         public IActionResult GetAll()
         {
             var dltv = VHIDbContext.DatLichTuVan.ToList();
+            if (dltv == null || dltv.Count == 0)
+            {
+                return BadRequest("Không tồn tại Yêu cầu tư vấn nào.");
+            }
             List<DatLichTuVanDTO> dltvDTO = new List<DatLichTuVanDTO>();
             foreach (var dltv_domain in dltv)
             {
@@ -29,6 +33,7 @@ namespace API.Controllers
             }
             return Ok(dltvDTO);
         }
+
 
         [HttpGet]
         [Route("id:int")]
@@ -41,6 +46,91 @@ namespace API.Controllers
             }
             var yctv_dto = CreateDLTVDTO(yctv);
             return Ok(yctv_dto);
+        }
+
+
+        [HttpGet]
+        [Route("GetByIdKhachHang")]
+        public IActionResult GetByIdkh(int idkh)
+        {
+            var kh = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == idkh);
+
+            if (kh == null)
+            {
+                return NotFound("Không tồn tại Khách hàng.");
+            }
+
+            var dltv = VHIDbContext.DatLichTuVan.Where(q => q.KhachHangID_KhachHang == idkh).ToList();
+
+            if (dltv == null || dltv.Count() == 0)
+            {
+                return NotFound("Không tìm thấy yêu cầu tư vấn tương ứng với Khách hàng.");
+            }
+
+            List<DatLichTuVanDTO> dsdltvDTO = new List<DatLichTuVanDTO>();
+            foreach (var tv in dltv)
+            {
+                DatLichTuVanDTO dltv_dto = CreateDLTVDTO(tv);
+                dsdltvDTO.Add(dltv_dto);
+            }
+
+            return Ok(dsdltvDTO);
+        }
+
+        [HttpGet]
+        [Route("GetByIdNhanVien1")]
+        public IActionResult GetByIdnv1(int idnv)
+        {
+            var nv = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == idnv);
+
+            if (nv == null)
+            {
+                return NotFound("Không tồn tại Nhân viên.");
+            }
+
+            var dltv = VHIDbContext.DatLichTuVan.Where(q => q.NhanVien1ID_NhanVien == idnv).ToList();
+
+            if (dltv == null || dltv.Count() == 0)
+            {
+                return NotFound("Không tìm thấy yêu cầu tư vấn tương ứng với Nhân viên.");
+            }
+
+            List<DatLichTuVanDTO> dsdltvDTO = new List<DatLichTuVanDTO>();
+            foreach (var tv in dltv)
+            {
+                DatLichTuVanDTO dltv_dto = CreateDLTVDTO(tv);
+                dsdltvDTO.Add(dltv_dto);
+            }
+
+            return Ok(dsdltvDTO);
+        }
+
+        [HttpGet]
+        [Route("GetByIdNhanVien2")]
+        public IActionResult GetByIdnv2(int idnv)
+        {
+            var nv = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == idnv);
+
+            if (nv == null)
+            {
+                return NotFound("Không tồn tại Nhân viên.");
+            }
+
+            var dltv = VHIDbContext.DatLichTuVan.Where(q => q.NhanVien2ID_NhanVien == idnv).ToList();
+
+            if (dltv == null || dltv.Count() == 0)
+            {
+                return NotFound("Không tìm thấy yêu cầu tư vấn tương ứng với Nhân viên.");
+            }
+
+            List<DatLichTuVanDTO> dsdltvDTO = new List<DatLichTuVanDTO>();
+            foreach (var tv in dltv)
+            {
+                DatLichTuVanDTO dltv_dto = CreateDLTVDTO(tv);
+                dsdltvDTO.Add(dltv_dto);
+            }
+
+            return Ok(dsdltvDTO);
         }
 
         [HttpPost]
