@@ -1,7 +1,9 @@
 ﻿using API.Data;
 using API.Domain;
 using API.DTOs;
+using API.Helper;
 using API.MiddleWare;
+using API.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -14,10 +16,12 @@ namespace API.Controllers
     public class TaiKhoanController: ControllerBase
     {
         private readonly VHIDbContext VHIDbContext;
+        private readonly IEmailService emailService;
 
-        public TaiKhoanController(VHIDbContext VHIDbContext)
+        public TaiKhoanController(VHIDbContext VHIDbContext, IEmailService emailService)
         {
             this.VHIDbContext = VHIDbContext;
+            this.emailService = emailService;
         }
 
         [HttpGet]
@@ -125,7 +129,7 @@ namespace API.Controllers
             var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == dto.id);
             if (tk == null)
             {
-                return NotFound("Không tồn tại tài khoản.");
+                return NotFound("Không tìm thấy tài khoản.");
             }
             //Kiểm tra tình trạng hoạt động
             if (dto.tinhTrang != "Đã Khóa" && dto.tinhTrang != "Hoạt Động")
@@ -139,6 +143,56 @@ namespace API.Controllers
             TaiKhoanDTO tk_dto = CreateTaiKhoanDTO(tk);
 
             return Ok(tk_dto);
+        }
+
+        [HttpPost]
+        [Route("DoiMatKhau")]
+        public IActionResult DoiMatKhau([FromBody] DoiMatKhauDTO dto)
+        {
+            var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == dto.ID_TaiKhoan);
+            if (tk == null)
+            {
+                return NotFound("Không tìm thấy tài khoản.");
+            }
+            var kh = VHIDbContext.KhachHang.FirstOrDefault(x => x.TaiKhoan == tk);
+            if(kh == null)
+            {
+                return NotFound("Không tìm thấy khách hàng với tài khoản tương ứng.");
+            }
+            if(HashPassword(dto.MatKhauCu) != tk.MatKhau)
+            {
+                return BadRequest("Mật khẩu hiện tại không đúng.");
+            }
+            //Gửi email cho khách hàng
+            var jwtService = new JwtService("vhihealthinsurance");
+            var accessToken = jwtService.GenerateTokenChangePassword(tk.ID_TaiKhoan.ToString(), dto.MatKhauMoi, 10);
+
+            Mailrequest mailrequest = new Mailrequest()
+            {
+                ToEmail = kh.Email,
+                Subject = "Đổi mật khẩu cho tài khoản Bảo hiểm sức khỏe VHI",
+                Body = $"<div>Để ĐỔI MẬT KHẨU tài khoản của bạn trên trang web Bảo hiểm sức khỏe VHI, vui lòng click vào đường dẫn sau đây: <a href=\"https://localhost:8081/VerifyEmail?accessToken={accessToken}\">Link</a></div>"
+            };
+            emailService.SendEmailAsync(mailrequest);
+            return Ok();
+        }
+
+        [HttpPost("UpDateMatKhau")]
+        public IActionResult UpDateMatKhau(int idtk, string MatKhauMoi)
+        {
+            var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == idtk);
+            if (tk == null)
+            {
+                return NotFound("Không tìm thấy tài khoản.");
+            }
+
+            // Cập nhật và lưu vào cơ sở dữ liệu
+            tk.MatKhau = HashPassword(MatKhauMoi);
+            VHIDbContext.SaveChanges();
+
+            TaiKhoanDTO tk_dto = CreateTaiKhoanDTO(tk);
+
+            return Ok("Mật Khẩu đã được cập nhật.");
         }
 
         [HttpDelete]
