@@ -53,9 +53,8 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("ThemChinhSach")]
-        public IActionResult ThemCS([FromBody] ChinhSachDTO dto)
+        public IActionResult ThemCS([FromBody] AddChinhSachDTO dto)
         {
-
             ChinhSach cs_Domain = new ChinhSach()
             {
                 TenChinhSach = dto.TenChinhSach,

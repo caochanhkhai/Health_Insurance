@@ -85,7 +85,7 @@ namespace API.Controllers
         [Route("YeuCauChiTra")]
         public IActionResult YeucauChiTra([FromBody] AddYeuCauChiTraDTO dto)
         {
-            var qlbh = VHIDbContext.QuanLyBaoHiem.FirstOrDefault(x => x.ID == dto.QLBHID); ;
+            var qlbh = VHIDbContext.QuanLyBaoHiem.FirstOrDefault(x => x.ID == dto.QLBHID); 
             if (qlbh == null)
             {
                 return NotFound("Không tìm thấy quản lý bảo hiểm tương ứng.");
@@ -140,27 +140,6 @@ namespace API.Controllers
             YeuCauChiTraDTO ycctDTO = CreateYeuCauChiTraDTO(ycctDomain);
 
             return Ok(ycctDTO);
-        }
-
-
-        [HttpPost]
-        [Route("CapNhatTinhTrangDuyet")]
-        public IActionResult UpdateTinhTrangDuyet(int id, string tinhTrangDuyet)
-        {
-            var ycctDomain = VHIDbContext.YeuCauChiTra.FirstOrDefault(x => x.ID_YeuCauChiTra == id);
-            if (ycctDomain == null)
-            {
-                return NotFound("Không tìm thấy yêu cầu chi trả.");
-            }
-            if(tinhTrangDuyet!="Từ Chối" && tinhTrangDuyet!="Đã Duyệt")
-            {
-                return BadRequest("Tình trạng duyệt không hợp lệ");
-            }
-            ycctDomain.TinhTrangDuyet = tinhTrangDuyet;
-            VHIDbContext.SaveChanges();
-
-            var updated_ycct_dto = CreateYeuCauChiTraDTO(ycctDomain);
-            return Ok(updated_ycct_dto);
         }
 
         [HttpDelete]

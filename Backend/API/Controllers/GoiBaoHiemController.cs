@@ -49,14 +49,14 @@ namespace API.Controllers
             return Ok(gbh_dto);
         }
 
-        [HttpPut]
-        [Route("UpdateHinhAnh(idgbh)")]
+        [HttpPost]
+        [Route("UpdateHinhAnh")]
         public IActionResult UpdateGoiBaoHiem_HinhAnh(int idgbh, string LinkHinhAnh)
         {
             var gbhDomain = VHIDbContext.GoiBaoHiem.FirstOrDefault(x => x.ID_GoiBaoHiem == idgbh);
             if (gbhDomain == null)
             {
-                return NotFound("Không tồn tại gói bảo hiểm này!");
+                return NotFound("Không tồn tại gói bảo hiểm này.");
             }
 
             gbhDomain.HinhAnh = LinkHinhAnh;
@@ -68,9 +68,16 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("ThemGoiBaoHiem")]
-        public IActionResult ThemCS([FromBody] GoiBaoHiemDTO dto)
+        public IActionResult ThemGoiBaoHiem([FromBody] AddGoiBaoHiemDTO dto)
         {
-
+            if (dto.GiaTien <= 0)
+            {
+                return BadRequest("Giá tiền Gói bảo hiểm không hợp lệ: " + dto.GiaTien);
+            }
+            if (dto.ThoiHan <= 0)
+            {
+                return BadRequest("Thời hạn Gói bảo hiểm không hợp lệ: " + dto.ThoiHan);
+            }
             GoiBaoHiem gbh_Domain = new GoiBaoHiem()
             {
                 TenBaoHiem = dto.TenBaoHiem,
@@ -79,7 +86,7 @@ namespace API.Controllers
                 ThoiHan = dto.ThoiHan,
                 MoTa = dto.MoTa,
                 NgayPhatHanh = dto.NgayPhatHanh,
-                TinhTrang = dto.TinhTrang,
+                TinhTrang = "Đang Phát Hành",
                 HinhAnh = dto.HinhAnh
             };
 
@@ -91,8 +98,8 @@ namespace API.Controllers
             return Ok(gbhDTO);
         }
 
-        [HttpPut("CapNhatGoiBaoHiem/{id}")]
-        public IActionResult CapNhatGBH([FromRoute] int id, [FromBody] GoiBaoHiemDTO? dto)
+        [HttpPost("CapNhatGoiBaoHiem")]
+        public IActionResult CapNhatGBH(int id, [FromBody] UpdateGoiBaoHiemDTO dto)
         {
             var gbhDomain = VHIDbContext.GoiBaoHiem.FirstOrDefault(x => x.ID_GoiBaoHiem == id);
 
@@ -100,7 +107,19 @@ namespace API.Controllers
             {
                 return NotFound("Không tìm thấy gói bảo hiểm.");
             }
-            // Cập nhật và lưu vào cơ sở dữ liệu
+            if(dto.TinhTrang != "Đang Phát Hành" && dto.TinhTrang != "Ngưng Phát Hành")
+            {
+                return BadRequest("Tình trạng Gói bảo hiểm không hợp lệ: " + dto.TinhTrang);
+            }
+            if (dto.GiaTien <= 0)
+            {
+                return BadRequest("Giá tiền Gói bảo hiểm không hợp lệ: " + dto.GiaTien);
+            }
+            if (dto.ThoiHan <= 0)
+            {
+                return BadRequest("Thời hạn Gói bảo hiểm không hợp lệ: " + dto.ThoiHan);
+            }
+
             gbhDomain.TenBaoHiem = dto.TenBaoHiem;
             gbhDomain.TenGoi = dto.TenGoi;
             gbhDomain.GiaTien = dto.GiaTien;

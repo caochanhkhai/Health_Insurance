@@ -108,16 +108,26 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("QuanLyBaoHiem")]
-        public IActionResult QuanLyBaoHiem([FromBody] QuanLyBaoHiemDTO dto)
+        public IActionResult QuanLyBaoHiem([FromBody] AddQuanLyBaoHiemDTO dto)
         {
-
+            var kh = VHIDbContext.KhachHang.FirstOrDefault(x=>x.ID_KhachHang == dto.ID_KhachHang);
+            var gbh = VHIDbContext.GoiBaoHiem.FirstOrDefault(x=>x.ID_GoiBaoHiem == dto.ID_GoiBaoHiem);
+            if (kh == null)
+            {
+                return NotFound("Không tìm thấy Khách hàng.");
+            }
+            if (gbh == null)
+            {
+                return NotFound("Không tìm thấy Gói bảo hiểm.");
+            }
+            
             var QuanLyBaoHiemDomain = new QuanLyBaoHiem()
             {
-                KhachHangID_KhachHang = dto.ID_KhachHang,
-                GoiBaoHiemID_GoiBaoHiem = dto.ID_GoiBaoHiem,
+                KhachHang = kh,
+                GoiBaoHiem = gbh,
                 ThoiGianBatDau = dto.ThoiGianBatDau,
                 ThoiGianKetThuc = dto.ThoiGianKetThuc,
-                HanMucDaSuDung = dto.HanMucDaSuDung
+                HanMucDaSuDung = 0
             };
 
             VHIDbContext.QuanLyBaoHiem.Add(QuanLyBaoHiemDomain);
@@ -129,13 +139,13 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Route("CapNhatHanMucSuDung{id:int}")]
-        public IActionResult UpdateHanMucSuDung([FromRoute] int id, decimal HanMucSuDung)
+        [Route("CapNhatHanMucSuDung")]
+        public IActionResult UpdateHanMucSuDung(int id, decimal HanMucSuDung)
         {
             var qlbhDomain = VHIDbContext.QuanLyBaoHiem.FirstOrDefault(x => x.ID == id);
             if (qlbhDomain == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy Quản lý bảo hiểm.");
             }
             qlbhDomain.HanMucDaSuDung = qlbhDomain.HanMucDaSuDung + HanMucSuDung;
             VHIDbContext.SaveChanges();
