@@ -23,7 +23,7 @@ namespace API.MiddleWare
             {
             new Claim("idtk", idtk),
             new Claim("tenDN", tenDN)
-        };
+            };
 
             var token = new JwtSecurityToken(
                 claims: claims,
@@ -34,5 +34,24 @@ namespace API.MiddleWare
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        public string GenerateTokenChangePassword(string idtk, string MatKhauMoi, int expiresInMinutes = 10)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+            new Claim("idtk", idtk),
+            new Claim("MatKhauMoi", MatKhauMoi)
+            };
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(expiresInMinutes),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
 }

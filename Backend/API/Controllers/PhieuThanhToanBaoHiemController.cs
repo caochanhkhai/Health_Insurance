@@ -6,6 +6,7 @@ using API.MiddleWare;
 using API.Service;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -77,6 +78,28 @@ namespace API.Controllers
             }
 
             return Ok(dspttbhDTO);
+        }
+
+        [HttpGet]
+        [Route("GetPhieuThanhToanDenHan")]
+        public IActionResult GetPhieuThanhToanDenHan(int soNgay)
+        {
+            var pttdhList = VHIDbContext.PhieuThanhToanDenHan.FromSqlRaw("EXEC GetHopDongWithDays "+ soNgay).ToList();
+            if (pttdhList == null || pttdhList.Count == 0)
+            {
+                return NotFound("Không tồn tại Phiếu thanh toán đến hạn trong "+ soNgay +" ngày.");
+            }
+
+            var pttdhDTOList = pttdhList.Select(pttdh => new PhieuThanhToanDenHanDTO
+            {
+                ID_HopDong = pttdh.ID_HopDong,
+                TenBaoHiem = pttdh.TenBaoHiem,
+                TenGoi = pttdh.TenGoi,
+                SoNgayDenHan = pttdh.SoNgayDenHan,
+                SoTienCanDong = pttdh.SoTienCanDong
+            }).ToList();
+            
+            return Ok(pttdhDTOList);
         }
 
         [HttpPost]

@@ -26,6 +26,12 @@ namespace API.Data
         public DbSet<NhanVien> NhanVien { get; set; }
         public DbSet<TaiKhoan> TaiKhoan { get; set; }
         public DbSet<PhieuDangKi> PhieuDangKi { get; set; }
+        public DbSet<PhieuThanhToanDenHan> PhieuThanhToanDenHan { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<PhieuThanhToanDenHan>()
+                .HasNoKey();
+        }
 
     }
 }

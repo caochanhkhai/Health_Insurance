@@ -113,21 +113,16 @@ namespace API.Controllers
                 return NotFound("Không tồn tại Tài khoản.");
             }
 
-            var dsnv = VHIDbContext.NhanVien.Where(q => q.TaiKhoanID_TaiKhoan == idtk).ToList();
+            var nv = VHIDbContext.NhanVien.FirstOrDefault(q => q.TaiKhoanID_TaiKhoan == idtk);
 
-            if (dsnv == null || dsnv.Count() == 0)
+            if (nv == null)
             {
                 return NotFound("Không tìm thấy Tài khoản tương ứng với Nhân viên.");
             }
+                        
+            NhanVienDTO nv_dto = CreateNhanVienDTO(nv);            
 
-            List<NhanVienDTO> dsnvDTO = new List<NhanVienDTO>();
-            foreach (var nv in dsnv)
-            {
-                NhanVienDTO dsnv_dto = CreateNhanVienDTO(nv);
-                dsnvDTO.Add(dsnv_dto);
-            }
-
-            return Ok(dsnvDTO);
+            return Ok(nv_dto);
         }
 
         [HttpPost]
@@ -157,7 +152,7 @@ namespace API.Controllers
             return Ok(nvDTO);
         }
 
-        [HttpPut("ChinhSuaLoaiNhanVien")]
+        [HttpPost("ChinhSuaLoaiNhanVien")]
         public IActionResult ChinhSuaLoaiNhanVien([FromBody] UpdateLoaiNhanVienDTO dto)
         {
             var nv = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == dto.id);

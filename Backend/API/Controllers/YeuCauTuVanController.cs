@@ -78,8 +78,8 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("GetByIdNhanVien1")]
-        public IActionResult GetByIdnv1(int idnv)
+        [Route("GetByIdNhanVien")]
+        public IActionResult GetByIdnv(int idnv)
         {
             var nv = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == idnv);
 
@@ -88,35 +88,7 @@ namespace API.Controllers
                 return NotFound("Không tồn tại Nhân viên.");
             }
 
-            var dltv = VHIDbContext.DatLichTuVan.Where(q => q.NhanVien1ID_NhanVien == idnv).ToList();
-
-            if (dltv == null || dltv.Count() == 0)
-            {
-                return NotFound("Không tìm thấy yêu cầu tư vấn tương ứng với Nhân viên.");
-            }
-
-            List<DatLichTuVanDTO> dsdltvDTO = new List<DatLichTuVanDTO>();
-            foreach (var tv in dltv)
-            {
-                DatLichTuVanDTO dltv_dto = CreateDLTVDTO(tv);
-                dsdltvDTO.Add(dltv_dto);
-            }
-
-            return Ok(dsdltvDTO);
-        }
-
-        [HttpGet]
-        [Route("GetByIdNhanVien2")]
-        public IActionResult GetByIdnv2(int idnv)
-        {
-            var nv = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == idnv);
-
-            if (nv == null)
-            {
-                return NotFound("Không tồn tại Nhân viên.");
-            }
-
-            var dltv = VHIDbContext.DatLichTuVan.Where(q => q.NhanVien2ID_NhanVien == idnv).ToList();
+            var dltv = VHIDbContext.DatLichTuVan.Where(q => q.NhanVien1ID_NhanVien == idnv || q.NhanVien2ID_NhanVien == idnv).ToList();
 
             if (dltv == null || dltv.Count() == 0)
             {

@@ -53,13 +53,15 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("ThemChinhSach")]
-        public IActionResult ThemCS([FromBody] ChinhSachDTO dto)
+        public IActionResult ThemCS([FromBody] AddChinhSachDTO dto)
         {
-
             ChinhSach cs_Domain = new ChinhSach()
             {
                 TenChinhSach = dto.TenChinhSach,
-                ThoiGianPhatHanh = dto.ThoiGianPhatHanh
+                ThoiGianPhatHanh = dto.ThoiGianPhatHanh,
+                HanMucChiTra = dto.HanMucChiTra,
+                DieuKienApDung = dto.DieuKienApDung,
+                Mota = dto.Mota
             };
 
             VHIDbContext.ChinhSach.Add(cs_Domain);
@@ -77,7 +79,10 @@ namespace API.Controllers
             {
                 ID_ChinhSach = cs.ID_ChinhSach,
                 TenChinhSach = cs.TenChinhSach,
-                ThoiGianPhatHanh = cs.ThoiGianPhatHanh
+                ThoiGianPhatHanh = cs.ThoiGianPhatHanh,
+                HanMucChiTra = cs.HanMucChiTra,
+                DieuKienApDung = cs.DieuKienApDung,
+                Mota = cs.Mota
             };
         }
     }

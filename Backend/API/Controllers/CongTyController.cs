@@ -34,7 +34,6 @@ namespace API.Controllers
             return Ok(dsctDTO);
         }
 
-
         [HttpGet]
         [Route("id:int")]
         public IActionResult GetById(int id)
@@ -86,7 +85,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("ChinhSuaCongTy(id: int)")]
+        [HttpPost("ChinhSuaCongTy(id: int)")]
         public IActionResult ChinhSuaCongTY([FromBody] CongTyDTO dto)
         {
             var ctDomain = VHIDbContext.CongTy.FirstOrDefault(x => x.ID_CongTy == dto.ID_CongTy);
