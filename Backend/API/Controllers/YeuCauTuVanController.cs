@@ -168,13 +168,6 @@ namespace API.Controllers
                 return BadRequest("Khách hàng chưa xác thực tài khoản");
             }
 
-            TimeSpan duration = dto.ThoiGian.Subtract(DateTime.Now);
-            int numberOfDays = (int)duration.TotalDays;
-            if (numberOfDays < 7)
-            {
-                return BadRequest("Vui lòng chọn Thời gian tư vấn cách thời điểm hiện tại ít nhất 1 tuần.");
-            }
-
             var DatLichTuVanDomain = new DatLichTuVan()
             {
                 TinhTrangDuyet = "Chưa Duyệt",

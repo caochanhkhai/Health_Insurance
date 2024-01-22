@@ -157,22 +157,22 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("HopDong")]
-        public IActionResult HopDong([FromBody] AddHopDongDTO dto)
+        public IActionResult HopDong(int idPDK)
         {
-            var pdk = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == dto.ID_PhieuDangKi);
+            var pdk = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == idPDK);
             if (pdk == null)
             {
                 return NotFound("Không tìm thấy Phiếu đăng kí");
+            }
+            var hd = VHIDbContext.HopDong.FirstOrDefault(x=>x.PhieuDangKiID_PhieuDangKi == idPDK);
+            if (hd != null)
+            {
+                return BadRequest("Đã tồn tại Hợp đồng cho phiếu đăng kí này.");
             }
 
             var kh = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == pdk.KhachHangID_KhachHang);
             var nv = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == pdk.NhanVienID_NhanVien);
             var gbh = VHIDbContext.GoiBaoHiem.FirstOrDefault(x => x.ID_GoiBaoHiem == pdk.GoiBaoHiemID_GoiBaoHiem);
-
-            if(dto.ThoiHan <= 0)
-            {
-                return BadRequest("Thời hạn không hợp lệ: " + dto.ThoiHan.ToString() + " năm.");
-            }
 
             var HopDongDomain = new HopDong()
             {
@@ -180,11 +180,7 @@ namespace API.Controllers
                 GoiBaoHiem = gbh,
                 PhieuDangKi = pdk,
                 NhanVien = nv,
-                NgayKyKet = dto.NgayKyKet,
-                ThoiHan = dto.ThoiHan,
-                GiaTriHopDong = 0,
-                DieuKhoan = dto.DieuKhoan,
-                HieuLuc = dto.HieuLuc
+                DieuKhoan = "Chưa có điều khoản"
             };
             VHIDbContext.HopDong.Add(HopDongDomain);
             VHIDbContext.SaveChanges();
@@ -202,7 +198,7 @@ namespace API.Controllers
                 return NotFound("Không tìm thấy hợp đồng.");
             }
 
-            // Cập nhật và lưu vào cơ sở dữ liệu
+            // Cập nhật thông tin và lưu vào cơ sở dữ liệu
             hdDomain.NgayKyKet = hd.NgayKyKet;
             hdDomain.ThoiHan= hd.ThoiHan; 
             hdDomain.DieuKhoan= hd.DieuKhoan;   

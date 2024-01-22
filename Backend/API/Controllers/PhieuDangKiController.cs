@@ -260,13 +260,6 @@ namespace API.Controllers
                 return BadRequest("Không tìm thấy Gói bảo hiểm.");
             }
 
-            TimeSpan duration = dto.ThoiGianKiKet.Subtract(DateTime.Now);
-            int numberOfDays = (int)duration.TotalDays;
-            if(numberOfDays < 7)
-            {
-                return BadRequest("Vui lòng chọn Thời gian kí kết cách thời điểm hiện tại ít nhất 1 tuần.");
-            }
-           
             PhieuDangKi PDKdomain = new PhieuDangKi
             {
                 TinhTrangDuyet = "Chưa Duyệt",
