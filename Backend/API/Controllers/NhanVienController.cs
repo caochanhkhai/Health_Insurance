@@ -103,7 +103,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("GetByIdNhanVien1")]
+        [Route("GetByIdTaiKhoan")]
         public IActionResult GetByIdtk(int idtk)
         {
             var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == idtk);
