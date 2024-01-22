@@ -161,7 +161,7 @@ namespace API.Controllers
             return Ok(kh_dto);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("UpdateThongTinCaNhanKhachHang(id)")]
         public IActionResult UpdateKhachHang(int id, [FromBody] KhachHangDTO dto)
         {
@@ -181,7 +181,7 @@ namespace API.Controllers
             return Ok(kh_dto);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("UpdateCongTyKhachHang(idkh,idct)")]
         public IActionResult UpdateKhachHang_CongTy(int idkh,int idct)
         {
@@ -203,7 +203,7 @@ namespace API.Controllers
             return Ok(kh_dto);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("XacThucKhachHang(idkh)")]
         public IActionResult UpdateKhachHang_XacThuc(int idkh)
         {

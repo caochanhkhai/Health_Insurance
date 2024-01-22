@@ -106,7 +106,7 @@ namespace API.Controllers
             return Ok(pttbhDTO);
         }
 
-        [HttpPut("XetDuyetPhieuThanhToan/{id}")]
+        [HttpPost("XetDuyetPhieuThanhToan/{id}")]
         public IActionResult XetDuyetPhieuThanhToan(int id, string tinhTrangDuyet)
         {
             var phieuThanhToanDomain = VHIDbContext.PhieuThanhToanBaoHiem.FirstOrDefault(x => x.ID_PhieuThanhToan == id);

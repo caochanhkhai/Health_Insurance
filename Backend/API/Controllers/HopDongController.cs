@@ -154,7 +154,7 @@ namespace API.Controllers
             return Ok(HopDong_dto);
         }
 
-        [HttpPut("ChinhSuaHopDong/{id}")]
+        [HttpPost("ChinhSuaHopDong/{id}")]
         public IActionResult ChinhSuaHopDong(int id, [FromBody] UpdateHopDongDTO hd)
         {
             var hdDomain = VHIDbContext.HopDong.FirstOrDefault(x => x.ID_HopDong == id);
@@ -176,7 +176,7 @@ namespace API.Controllers
             return Ok(hdDTO);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("XacDinhGiaTriHopDong")]
         public IActionResult XacDinhGiaTriHopDong([FromBody] XacDinhGiaTriHopDongDTO dto)
         {

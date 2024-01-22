@@ -119,7 +119,7 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        [HttpPut("ChinhSuaTinhTrangHoatDong")]
+        [HttpPost("ChinhSuaTinhTrangHoatDong")]
         public IActionResult ChinhSuaTinhTrangHoatDong([FromBody] UpdateTinhTrangTaiKhoanDTO dto)
         {
             var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == dto.id);

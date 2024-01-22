@@ -157,7 +157,7 @@ namespace API.Controllers
             return Ok(DatLichTuVan_dto);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("UpdateTinhTrangDuyet{id:int}")]
         public IActionResult UpdateTinhTrangDuyet([FromRoute] int id,string tinhTrangDuyet)
         {
