@@ -39,7 +39,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("id:int")]
+        [Route("GetById")]
         public IActionResult GetById(int id)
         {
             var hd = VHIDbContext.HopDong.FirstOrDefault(x => x.ID_HopDong == id);
@@ -53,9 +53,16 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("idkh:int")]
+        [Route("GetByIdKh")]
         public IActionResult GetByIdKh(int idkh)
         {
+            var kh = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == idkh);
+
+            if (kh == null)
+            {
+                return NotFound("Không tìm thấy Khách hàng.");
+            }
+
             var dshd = VHIDbContext.HopDong.Where(x => x.KhachHangID_KhachHang == idkh).ToList();
 
             if (dshd.Count() == 0 || dshd == null)
@@ -74,9 +81,16 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("idgbh:int")]
+        [Route("GetByIdgbh")]
         public IActionResult GetByIdgbh(int idgbh)
         {
+            var gbh = VHIDbContext.GoiBaoHiem.FirstOrDefault(x => x.ID_GoiBaoHiem == idgbh);
+
+            if (gbh == null)
+            {
+                return NotFound("Không tìm thấy Gói bảo hiểm.");
+            }
+
             var dshd = VHIDbContext.HopDong.Where(x=>x.GoiBaoHiemID_GoiBaoHiem == idgbh).ToList();
 
             if (dshd.Count() == 0 || dshd == null)
@@ -93,9 +107,16 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("idnv:int")]
+        [Route("GetByIdNv")]
         public IActionResult GetByIdNv(int idnv)
         {
+            var nv = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == idnv);
+
+            if (nv == null)
+            {
+                return NotFound("Không tìm thấy Nhân viên.");
+            }
+
             var dshd = VHIDbContext.HopDong.Where(x => x.NhanVienID_NhanVien == idnv).ToList();
 
             if (dshd.Count() == 0 || dshd == null)
@@ -112,38 +133,56 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("idpdk:int")]
+        [Route("GetByIdPDK")]
         public IActionResult GetByIdPDK(int idpdk)
         {
-            var dshd = VHIDbContext.HopDong.Where(x => x.PhieuDangKiID_PhieuDangKi == idpdk);
+            var pdk = VHIDbContext.PhieuDangKi.FirstOrDefault(x=>x.ID_PhieuDangKi == idpdk);
 
-            if (dshd.Count() == 0 || dshd == null)
+            if(pdk == null)
+            {
+                return NotFound("Không tìm thấy Phiếu đăng kí.");
+            }
+
+            var hd = VHIDbContext.HopDong.FirstOrDefault(x => x.PhieuDangKiID_PhieuDangKi == idpdk);
+
+            if (hd == null)
             {
                 return NotFound("Không tìm thấy hợp đồng với phiếu đăng kí tương ứng");
             }
-            List<HopDongDTO> dshdDTO = new List<HopDongDTO>();
-            foreach (var item in dshd)
-            {
-                HopDongDTO hdDomain = CreateHDDTO(item);
-                dshdDTO.Add(hdDomain);
-            }
-            return Ok(dshdDTO);
+            
+            HopDongDTO hdDTO = CreateHDDTO(hd);
+               
+            return Ok(hdDTO);
         }
 
         [HttpPost]
         [Route("HopDong")]
-        public IActionResult HopDong([FromBody] HopDongDTO dto)
+        public IActionResult HopDong([FromBody] AddHopDongDTO dto)
         {
+            var pdk = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == dto.ID_PhieuDangKi);
+            if (pdk == null)
+            {
+                return NotFound("Không tìm thấy Phiếu đăng kí");
+            }
+
+            var kh = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == pdk.KhachHangID_KhachHang);
+            var nv = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == pdk.NhanVienID_NhanVien);
+            var gbh = VHIDbContext.GoiBaoHiem.FirstOrDefault(x => x.ID_GoiBaoHiem == pdk.GoiBaoHiemID_GoiBaoHiem);
+
+            if(dto.ThoiHan <= 0)
+            {
+                return BadRequest("Thời hạn không hợp lệ: " + dto.ThoiHan.ToString() + " năm.");
+            }
 
             var HopDongDomain = new HopDong()
             {
-                KhachHangID_KhachHang = dto.ID_KhachHang,
-                GoiBaoHiemID_GoiBaoHiem = dto.ID_GoiBaoHiem,
-                PhieuDangKiID_PhieuDangKi = dto.ID_PhieuDangKi,
-                NhanVienID_NhanVien = dto.ID_NhanVien,
+                KhachHang = kh,
+                GoiBaoHiem = gbh,
+                PhieuDangKi = pdk,
+                NhanVien = nv,
                 NgayKyKet = dto.NgayKyKet,
                 ThoiHan = dto.ThoiHan,
-                GiaTriHopDong = dto.GiaTriHopDong,
+                GiaTriHopDong = 0,
                 DieuKhoan = dto.DieuKhoan,
                 HieuLuc = dto.HieuLuc
             };
@@ -154,7 +193,7 @@ namespace API.Controllers
             return Ok(HopDong_dto);
         }
 
-        [HttpPut("ChinhSuaHopDong/{id}")]
+        [HttpPost("ChinhSuaHopDong/{id}")]
         public IActionResult ChinhSuaHopDong(int id, [FromBody] UpdateHopDongDTO hd)
         {
             var hdDomain = VHIDbContext.HopDong.FirstOrDefault(x => x.ID_HopDong == id);
@@ -165,8 +204,7 @@ namespace API.Controllers
 
             // Cập nhật và lưu vào cơ sở dữ liệu
             hdDomain.NgayKyKet = hd.NgayKyKet;
-            hdDomain.ThoiHan= hd.ThoiHan;
-            hdDomain.GiaTriHopDong = hd.GiaTriHopDong;  
+            hdDomain.ThoiHan= hd.ThoiHan; 
             hdDomain.DieuKhoan= hd.DieuKhoan;   
             hdDomain.HieuLuc= hd.HieuLuc;
             VHIDbContext.SaveChanges();
@@ -176,7 +214,7 @@ namespace API.Controllers
             return Ok(hdDTO);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("XacDinhGiaTriHopDong")]
         public IActionResult XacDinhGiaTriHopDong([FromBody] XacDinhGiaTriHopDongDTO dto)
         {
@@ -186,6 +224,7 @@ namespace API.Controllers
             {
                 return NotFound("Không tìm thấy hợp đồng");
             }
+
             hd.GiaTriHopDong = dto.price;
             VHIDbContext.SaveChanges();
 

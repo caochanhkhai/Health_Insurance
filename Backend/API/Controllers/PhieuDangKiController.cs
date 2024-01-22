@@ -226,7 +226,7 @@ namespace API.Controllers
             };
             return Ok(pdk_dto);
         }
-        [HttpPut("XetDuyetPhieuDangKy/{id}")]
+        [HttpPost("XetDuyetPhieuDangKy/{id}")]
         public IActionResult XetDuyetPhieuDangKy(int id, [FromBody] PhieuDangKiDTO phieuDangKiDto)
         {
             var phieuDangKy = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == id);
@@ -272,7 +272,7 @@ namespace API.Controllers
             return Ok(phieudk_dto);
         }
 
-        [HttpPut("CungCapToKhai(id: int, toKhai: string)")]
+        [HttpPost("CungCapToKhai(id: int, toKhai: string)")]
         public IActionResult CungCapToKhai([FromBody] CungCapToKhaiRequestDTO dto)
         {
             var pdkDomain = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == dto.id);
