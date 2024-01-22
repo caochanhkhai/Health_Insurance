@@ -115,7 +115,7 @@ namespace API.Controllers
         [Route("idpdk:int")]
         public IActionResult GetByIdPDK(int idpdk)
         {
-            var dshd = VHIDbContext.HopDong.Where(x => x.PhieuDangKiID_PhieuDangKi == idpdk).ToList();
+            var dshd = VHIDbContext.HopDong.Where(x => x.PhieuDangKiID_PhieuDangKi == idpdk);
 
             if (dshd.Count() == 0 || dshd == null)
             {
@@ -134,6 +134,7 @@ namespace API.Controllers
         [Route("HopDong")]
         public IActionResult HopDong([FromBody] HopDongDTO dto)
         {
+
             var HopDongDomain = new HopDong()
             {
                 KhachHangID_KhachHang = dto.ID_KhachHang,
@@ -154,7 +155,7 @@ namespace API.Controllers
         }
 
         [HttpPut("ChinhSuaHopDong/{id}")]
-        public IActionResult ChinhSuaHopDong(int id, [FromBody] HopDongDTO hd)
+        public IActionResult ChinhSuaHopDong(int id, [FromBody] UpdateHopDongDTO hd)
         {
             var hdDomain = VHIDbContext.HopDong.FirstOrDefault(x => x.ID_HopDong == id);
             if (hdDomain == null)

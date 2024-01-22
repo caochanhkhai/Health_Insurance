@@ -229,7 +229,7 @@ namespace API.Controllers
         [HttpPut("XetDuyetPhieuDangKy/{id}")]
         public IActionResult XetDuyetPhieuDangKy(int id, [FromBody] PhieuDangKiDTO phieuDangKiDto)
         {
-            var phieuDangKy = VHIDbContext.PhieuDangKi.SingleOrDefault(x => x.ID_PhieuDangKi == id);
+            var phieuDangKy = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == id);
 
             if (phieuDangKy == null)
             {
@@ -239,17 +239,8 @@ namespace API.Controllers
             // Cập nhật tình trạng duyệt và lưu vào cơ sở dữ liệu
             phieuDangKy.TinhTrangDuyet = phieuDangKiDto.TinhTrangDuyet;
             VHIDbContext.SaveChanges();
-            var phieudk_dto = new PhieuDangKiDTO
-            {
-                ID_PhieuDangKi = phieuDangKy.ID_PhieuDangKi,
-                TinhTrangDuyet = phieuDangKy.TinhTrangDuyet,
-                DiaDiemKiKet = phieuDangKy.DiaDiemKiKet,
-                ThoiGianKiKet = phieuDangKy.ThoiGianKiKet,
-                ToKhaiSucKhoe = phieuDangKy.ToKhaiSucKhoe,
-                ID_KhachHang = phieuDangKy.KhachHangID_KhachHang,
-                ID_GoiBaoHiem = phieuDangKy.GoiBaoHiemID_GoiBaoHiem,
-                ID_NhanVien = phieuDangKy.NhanVienID_NhanVien
-            };
+
+            PhieuDangKiDTO phieudk_dto = CreatePhieuDKDTO(phieuDangKy);
 
             return Ok(phieudk_dto);
         }

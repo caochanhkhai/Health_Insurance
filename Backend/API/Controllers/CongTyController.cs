@@ -49,6 +49,21 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Route("ThemCongTy")]
+        public IActionResult CreateCongTy([FromBody] AddCongTyDTO dto)
+        {
+            
+            CongTy ctDomain = CreateCongTy_Domain(dto);
+
+            VHIDbContext.CongTy.Add(ctDomain);
+            VHIDbContext.SaveChanges();
+
+            CongTyDTO ctDTO = CreateCongTyDTO(ctDomain);
+
+            return Ok(ctDTO);
+        }
+
+        [HttpPost]
         [Route("ThemCongTy(New)ChoKH")]
         public IActionResult CreateNewCongTy(int idkh, [FromBody] CongTyDTO dto)
         {
@@ -71,6 +86,31 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpPut("ChinhSuaCongTy(id: int)")]
+        public IActionResult ChinhSuaCongTY([FromBody] CongTyDTO dto)
+        {
+            var ctDomain = VHIDbContext.CongTy.FirstOrDefault(x => x.ID_CongTy == dto.ID_CongTy);
+            if (ctDomain == null)
+            {
+                return NotFound("Không tìm thấy công ty.");
+            }
+
+            // Cập nhật và lưu vào cơ sở dữ liệu
+            ctDomain.TenCongTy = dto.TenCongTy;
+            ctDomain.SoNhaTenDuong= dto.SoNhaTenDuong;
+            ctDomain.PhuongXa=dto.PhuongXa;
+            ctDomain.QuanHuyen= dto.QuanHuyen;
+            ctDomain.ThanhPho= dto.ThanhPho;
+            ctDomain.DienThoai= dto.DienThoai;
+            ctDomain.Email= dto.Email;
+            VHIDbContext.SaveChanges();
+
+            CongTyDTO ctDTO = CreateCongTyDTO(ctDomain);
+
+            return Ok(ctDTO);
+        }
+
+
         private static CongTyDTO CreateCongTyDTO(CongTy CongTyDomain)
         {
             return new CongTyDTO()
@@ -85,6 +125,21 @@ namespace API.Controllers
                 Email = CongTyDomain.Email
             };
         }
+
+        private static CongTy CreateCongTy_Domain(AddCongTyDTO dto)
+        {
+            return new CongTy()
+            {
+                TenCongTy = dto.TenCongTy,
+                SoNhaTenDuong = dto.SoNhaTenDuong,
+                PhuongXa = dto.PhuongXa,
+                QuanHuyen = dto.QuanHuyen,
+                ThanhPho = dto.ThanhPho,
+                DienThoai = dto.DienThoai,
+                Email = dto.Email
+            };
+        }
+
 
         private static CongTy CreateCongTyDomain(CongTyDTO dto)
         {
