@@ -142,6 +142,38 @@ namespace API.Controllers
             {
                 return BadRequest("Loại nhân viên không hợp lệ");
             }
+            var dsnv = VHIDbContext.NhanVien.ToList();
+            foreach (var nv in dsnv)
+            {
+                if (dto.CMND == nv.CMND)
+                {
+                    return BadRequest("CMND đã tồn tại!");
+                }
+            }
+            foreach (var nv in dsnv)
+            {
+                if (dto.Email == nv.Email)
+                {
+                    return BadRequest("Email đã tồn tại!");
+                }
+            }
+            foreach (var nv in dsnv)
+            {
+                string stk = nv.SoTaiKhoan.TrimEnd();
+                if (dto.SoTaiKhoan == stk)
+                {
+                    return BadRequest("Số Tài Khoản đã tồn tại!");
+                }
+            }
+            foreach (var nv in dsnv)
+            {
+                string sdt = nv.SoDienThoai.TrimEnd();
+                if (dto.SoDienThoai == sdt)
+                {
+                    return BadRequest("Số Điện Thoại đã tồn tại!");
+                }
+            }
+
             NhanVien nv_Domain = CreateNhanVienDomain(dto, tk);
 
             VHIDbContext.NhanVien.Add(nv_Domain);

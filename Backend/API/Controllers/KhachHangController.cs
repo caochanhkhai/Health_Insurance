@@ -138,11 +138,43 @@ namespace API.Controllers
             {
                 return NotFound("Không tìm thấy Tài khoản");
             }
-            var kh = VHIDbContext.KhachHang.FirstOrDefault(x=>x.TaiKhoanID_TaiKhoan==idtk);
-            if (kh != null)
+            var khDomain = VHIDbContext.KhachHang.FirstOrDefault(x=>x.TaiKhoanID_TaiKhoan==idtk);
+            if (khDomain != null)
             {
                 return BadRequest("Đã tồn tại khách hàng cho tài khoản này.");
             }
+
+            var dskh = VHIDbContext.KhachHang.ToList();
+            foreach (var kh in dskh)
+            {
+                if (dto.CMND == kh.CMND)
+                {
+                    return BadRequest("CMND đã tồn tại!");
+                }
+            }
+            foreach (var kh in dskh)
+            {
+                if (dto.Email == kh.Email)
+                {
+                    return BadRequest("Email đã tồn tại!");
+                }
+            }
+            foreach (var kh in dskh)
+            {
+                if (dto.SoTaiKhoan == kh.SoTaiKhoan)
+                {
+                    return BadRequest("Số Tài Khoản đã tồn tại!");
+                }
+            }
+            foreach (var kh in dskh)
+            {
+                string sdt = kh.SoDienThoai.TrimEnd();
+                if (dto.SoDienThoai == sdt)
+                {
+                    return BadRequest("Số Điện Thoại đã tồn tại!");
+                }
+            }
+
             KhachHang KhachHangDomain = CreateKHDomain(dto, taiKhoan);
             VHIDbContext.KhachHang.Add(KhachHangDomain);
             VHIDbContext.SaveChanges();
@@ -161,7 +193,7 @@ namespace API.Controllers
             return Ok(kh_dto);
         }
 
-        [HttpPost]
+        /*[HttpPost]
         [Route("UpdateThongTinCaNhanKhachHang(id)")]
         public IActionResult UpdateKhachHang(int id, [FromBody] KhachHangDTO dto)
         {
@@ -179,7 +211,7 @@ namespace API.Controllers
             VHIDbContext.SaveChanges();
             KhachHangDTO kh_dto = CreateKHDTO(khDomain, khDomain.CongTyID_CongTy, khDomain.TaiKhoanID_TaiKhoan);
             return Ok(kh_dto);
-        }
+        }*/
 
         [HttpPost]
         [Route("UpdateCongTyKhachHang(idkh,idct)")]

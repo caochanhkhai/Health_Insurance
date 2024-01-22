@@ -53,6 +53,23 @@ namespace API.Controllers
         [Route("ThemBenhVien")]
         public IActionResult Thembv([FromBody] AddBenhVienDTO dto)
         {
+            var dsbv = VHIDbContext.BenhVien.ToList();
+            foreach (var bv in dsbv)
+            {
+                if (dto.Email == bv.Email)
+                {
+                    return BadRequest("Email đã tồn tại!");
+                }
+            }
+            foreach (var bv in dsbv)
+            {
+                string sdt = bv.SDT.TrimEnd();
+                if (dto.SDT == sdt)
+                {
+                    return BadRequest("Số Điện Thoại đã tồn tại!");
+                }
+            }
+
             BenhVien bv_Domain = new BenhVien()
             {
                 TenBenhVien = dto.TenBenhVien,

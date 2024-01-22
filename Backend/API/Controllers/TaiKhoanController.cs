@@ -59,6 +59,15 @@ namespace API.Controllers
         [Route("DangKi")]
         public IActionResult CreateTaiKhoan([FromBody] AddTaiKhoanDTO dto)
         {
+            var dstk = VHIDbContext.TaiKhoan.ToList();
+            foreach(var tk in dstk)
+            {
+                string tdn = tk.TenDangNhap.TrimEnd();
+                if (dto.TenDangNhap == tdn)
+                {
+                    return BadRequest("Tên Đăng Nhập đã tồn tại!");
+                }
+            }
             var TaiKhoanDomain = new TaiKhoan()
             {
                 TenDangNhap = dto.TenDangNhap,
@@ -87,6 +96,16 @@ namespace API.Controllers
             {
                 return BadRequest("Tình trạng hoạt động không hợp lệ");
             }
+            var dstk = VHIDbContext.TaiKhoan.ToList();
+            foreach (var tk in dstk)
+            {
+                string tdn = tk.TenDangNhap.TrimEnd();
+                if (dto.TenDangNhap == tdn)
+                {
+                    return BadRequest("Tên Đăng Nhập đã tồn tại!");
+                }
+            }
+
             var TaiKhoanDomain = new TaiKhoan()
             {
                 TenDangNhap = dto.TenDangNhap,
