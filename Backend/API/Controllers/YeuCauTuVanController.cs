@@ -34,9 +34,62 @@ namespace API.Controllers
             return Ok(dltvDTO);
         }
 
+        [HttpGet]
+        [Route("GetAllYeuCauTuVanChuaDuyet")]
+        public IActionResult GetAllYeuCauTuVanChuaDuyet()
+        {
+            var dltv = VHIDbContext.DatLichTuVan.Where(x=>x.TinhTrangDuyet == "Chưa Duyệt").ToList();
+            if (dltv == null || dltv.Count == 0)
+            {
+                return BadRequest("Không tồn tại Yêu cầu tư vấn nào chưa được duyệt.");
+            }
+            List<DatLichTuVanDTO> dltvDTO = new List<DatLichTuVanDTO>();
+            foreach (var dltv_domain in dltv)
+            {
+                DatLichTuVanDTO dltv_dto = CreateDLTVDTO(dltv_domain);
+                dltvDTO.Add(dltv_dto);
+            }
+            return Ok(dltvDTO);
+        }
 
         [HttpGet]
-        [Route("id:int")]
+        [Route("GetAllYeuCauTuVanDaDuyet")]
+        public IActionResult GetAllYeuCauTuVanDaDuyet()
+        {
+            var dltv = VHIDbContext.DatLichTuVan.Where(x => x.TinhTrangDuyet == "Đã Duyệt").ToList();
+            if (dltv == null || dltv.Count == 0)
+            {
+                return BadRequest("Không tồn tại Yêu cầu tư vấn nào đã được duyệt.");
+            }
+            List<DatLichTuVanDTO> dltvDTO = new List<DatLichTuVanDTO>();
+            foreach (var dltv_domain in dltv)
+            {
+                DatLichTuVanDTO dltv_dto = CreateDLTVDTO(dltv_domain);
+                dltvDTO.Add(dltv_dto);
+            }
+            return Ok(dltvDTO);
+        }
+
+        [HttpGet]
+        [Route("GetAllYeuCauTuVanTuChoi")]
+        public IActionResult GetAllYeuCauTuVanTuChoi()
+        {
+            var dltv = VHIDbContext.DatLichTuVan.Where(x => x.TinhTrangDuyet == "Từ Chối").ToList();
+            if (dltv == null || dltv.Count == 0)
+            {
+                return BadRequest("Không tồn tại Yêu cầu tư vấn nào bị từ chối.");
+            }
+            List<DatLichTuVanDTO> dltvDTO = new List<DatLichTuVanDTO>();
+            foreach (var dltv_domain in dltv)
+            {
+                DatLichTuVanDTO dltv_dto = CreateDLTVDTO(dltv_domain);
+                dltvDTO.Add(dltv_dto);
+            }
+            return Ok(dltvDTO);
+        }
+
+        [HttpGet]
+        [Route("GetById")]
         public IActionResult GetById(int id)
         {
             var yctv = VHIDbContext.DatLichTuVan.FirstOrDefault(x => x.ID_YeuCauTuVan == id);
@@ -114,6 +167,14 @@ namespace API.Controllers
             {
                 return BadRequest("Khách hàng chưa xác thực tài khoản");
             }
+
+            TimeSpan duration = dto.ThoiGian.Subtract(DateTime.Now);
+            int numberOfDays = (int)duration.TotalDays;
+            if (numberOfDays < 7)
+            {
+                return BadRequest("Vui lòng chọn Thời gian tư vấn cách thời điểm hiện tại ít nhất 1 tuần.");
+            }
+
             var DatLichTuVanDomain = new DatLichTuVan()
             {
                 TinhTrangDuyet = "Chưa Duyệt",
@@ -130,8 +191,8 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Route("UpdateTinhTrangDuyet{id:int}")]
-        public IActionResult UpdateTinhTrangDuyet([FromRoute] int id,string tinhTrangDuyet)
+        [Route("UpdateTinhTrangDuyet")]
+        public IActionResult UpdateTinhTrangDuyet(int id,string tinhTrangDuyet)
         {
             var dltvDomain = VHIDbContext.DatLichTuVan.FirstOrDefault(x => x.ID_YeuCauTuVan == id);
 

@@ -39,6 +39,63 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("GetAllPhieuDangKiDaDuyet")]
+        public IActionResult GetAllPhieuDangKiDaDuyet()
+        {
+            var dspdkDomain = VHIDbContext.PhieuDangKi.Where(x=>x.TinhTrangDuyet == "Đã Duyệt").ToList();
+            if (dspdkDomain == null || dspdkDomain.Count == 0)
+            {
+                return BadRequest("Không tồn tại Phiếu đăng ký nào đã được duyệt.");
+            }
+            List<PhieuDangKiDTO> dspdkDTO = new List<PhieuDangKiDTO>();
+            foreach (var pdk in dspdkDomain)
+            {
+                PhieuDangKiDTO pdk_dto = CreatePhieuDKDTO(pdk);
+                dspdkDTO.Add(pdk_dto);
+            }
+
+            return Ok(dspdkDTO);
+        }
+
+        [HttpGet]
+        [Route("GetAllPhieuDangKiChuaDuyet")]
+        public IActionResult GetAllPhieuDangKiChuaDuyet()
+        {
+            var dspdkDomain = VHIDbContext.PhieuDangKi.Where(x => x.TinhTrangDuyet == "Chưa Duyệt").ToList();
+            if (dspdkDomain == null || dspdkDomain.Count == 0)
+            {
+                return BadRequest("Không tồn tại Phiếu đăng ký nào chưa được duyệt.");
+            }
+            List<PhieuDangKiDTO> dspdkDTO = new List<PhieuDangKiDTO>();
+            foreach (var pdk in dspdkDomain)
+            {
+                PhieuDangKiDTO pdk_dto = CreatePhieuDKDTO(pdk);
+                dspdkDTO.Add(pdk_dto);
+            }
+
+            return Ok(dspdkDTO);
+        }
+
+        [HttpGet]
+        [Route("GetAllPhieuDangKiTuChoi")]
+        public IActionResult GetAllPhieuDangKiTuChoi()
+        {
+            var dspdkDomain = VHIDbContext.PhieuDangKi.Where(x => x.TinhTrangDuyet == "Từ Chối").ToList();
+            if (dspdkDomain == null || dspdkDomain.Count == 0)
+            {
+                return BadRequest("Không tồn tại Phiếu đăng ký nào bị từ chối.");
+            }
+            List<PhieuDangKiDTO> dspdkDTO = new List<PhieuDangKiDTO>();
+            foreach (var pdk in dspdkDomain)
+            {
+                PhieuDangKiDTO pdk_dto = CreatePhieuDKDTO(pdk);
+                dspdkDTO.Add(pdk_dto);
+            }
+
+            return Ok(dspdkDTO);
+        }
+
+        [HttpGet]
         [Route("GetById")]
         public IActionResult GetById(int id)
         {
@@ -190,16 +247,26 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("DangKyBaoHiem")]
-        public IActionResult CreatePhieuDangKi([FromBody] PhieuDangKiDTO dto, int idkh, int idgbh)
+        public IActionResult CreatePhieuDangKi([FromBody] AddPhieuDangKiDTO dto)
         {
-           
-            var kh = VHIDbContext.KhachHang.FirstOrDefault(b => b.ID_KhachHang == idkh);
-            var gbh = VHIDbContext.GoiBaoHiem.FirstOrDefault(b => b.ID_GoiBaoHiem == idgbh);
-            var nv = VHIDbContext.NhanVien.FirstOrDefault(b => b.ID_NhanVien == dto.ID_NhanVien);
-            if (kh == null || gbh == null)
+            var kh = VHIDbContext.KhachHang.FirstOrDefault(b => b.ID_KhachHang == dto.ID_KhachHang);
+            var gbh = VHIDbContext.GoiBaoHiem.FirstOrDefault(b => b.ID_GoiBaoHiem == dto.ID_GoiBaoHiem);
+            if (kh == null)
             {
-                return BadRequest("Khách hàng hoặc gói bảo hiểm không tồn tại.");
+                return BadRequest("Không tìm thấy Khách hàng.");
             }
+            if (gbh == null)
+            {
+                return BadRequest("Không tìm thấy Gói bảo hiểm.");
+            }
+
+            TimeSpan duration = dto.ThoiGianKiKet.Subtract(DateTime.Now);
+            int numberOfDays = (int)duration.TotalDays;
+            if(numberOfDays < 7)
+            {
+                return BadRequest("Vui lòng chọn Thời gian kí kết cách thời điểm hiện tại ít nhất 1 tuần.");
+            }
+           
             PhieuDangKi PDKdomain = new PhieuDangKi
             {
                 TinhTrangDuyet = "Chưa Duyệt",
@@ -213,21 +280,12 @@ namespace API.Controllers
             VHIDbContext.PhieuDangKi.Add(PDKdomain);
             VHIDbContext.SaveChanges();
 
-            var pdk_dto = new PhieuDangKiDTO
-            {
-                ID_PhieuDangKi = PDKdomain.ID_PhieuDangKi,
-                TinhTrangDuyet = PDKdomain.TinhTrangDuyet,
-                DiaDiemKiKet = PDKdomain.DiaDiemKiKet,
-                ThoiGianKiKet = PDKdomain.ThoiGianKiKet,
-                ToKhaiSucKhoe = PDKdomain.ToKhaiSucKhoe,
-                ID_GoiBaoHiem = PDKdomain.GoiBaoHiemID_GoiBaoHiem,
-                ID_KhachHang = PDKdomain.KhachHangID_KhachHang,
-                ID_NhanVien = PDKdomain.NhanVienID_NhanVien
-            };
+            var pdk_dto = CreatePhieuDKDTO(PDKdomain);
             return Ok(pdk_dto);
         }
-        [HttpPost("XetDuyetPhieuDangKy/{id}")]
-        public IActionResult XetDuyetPhieuDangKy(int id, [FromBody] PhieuDangKiDTO phieuDangKiDto)
+
+        [HttpPost("XetDuyetPhieuDangKy")]
+        public IActionResult XetDuyetPhieuDangKy(int id, string tinhTrangDuyet)
         {
             var phieuDangKy = VHIDbContext.PhieuDangKi.FirstOrDefault(x => x.ID_PhieuDangKi == id);
 
@@ -237,7 +295,7 @@ namespace API.Controllers
             }
 
             // Cập nhật tình trạng duyệt và lưu vào cơ sở dữ liệu
-            phieuDangKy.TinhTrangDuyet = phieuDangKiDto.TinhTrangDuyet;
+            phieuDangKy.TinhTrangDuyet = tinhTrangDuyet;
             VHIDbContext.SaveChanges();
 
             PhieuDangKiDTO phieudk_dto = CreatePhieuDKDTO(phieuDangKy);
