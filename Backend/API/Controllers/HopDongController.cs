@@ -169,6 +169,10 @@ namespace API.Controllers
             {
                 return BadRequest("Đã tồn tại Hợp đồng cho phiếu đăng kí này.");
             }
+            if(pdk.NhanVienID_NhanVien == null)
+            {
+                return BadRequest("Chưa có Nhân viên tiếp nhận Phiếu đăng kí.");
+            }
 
             var kh = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == pdk.KhachHangID_KhachHang);
             var nv = VHIDbContext.NhanVien.FirstOrDefault(x => x.ID_NhanVien == pdk.NhanVienID_NhanVien);
@@ -180,7 +184,8 @@ namespace API.Controllers
                 GoiBaoHiem = gbh,
                 PhieuDangKi = pdk,
                 NhanVien = nv,
-                DieuKhoan = "Chưa có điều khoản"
+                DieuKhoan = "Chưa có điều khoản",
+                TrangThai = "Dự Thảo"
             };
             VHIDbContext.HopDong.Add(HopDongDomain);
             VHIDbContext.SaveChanges();
@@ -197,12 +202,18 @@ namespace API.Controllers
             {
                 return NotFound("Không tìm thấy hợp đồng.");
             }
+            
+            if(hd.TrangThai !=  "Dự Thảo" && hd.TrangThai != "Hiệu Lực" && hd.TrangThai != "Hết Hiệu Lực")
+            {
+                return BadRequest("Trạng thái hợp đồng không hợp lệ: " + hd.TrangThai);
+            }
 
             // Cập nhật thông tin và lưu vào cơ sở dữ liệu
             hdDomain.NgayKyKet = hd.NgayKyKet;
             hdDomain.ThoiHan= hd.ThoiHan; 
             hdDomain.DieuKhoan= hd.DieuKhoan;   
             hdDomain.HieuLuc= hd.HieuLuc;
+            hdDomain.TrangThai = hd.TrangThai;
             VHIDbContext.SaveChanges();
 
             HopDongDTO hdDTO = CreateHDDTO(hdDomain);
@@ -256,7 +267,8 @@ namespace API.Controllers
             hd_dto.ThoiHan = hd.ThoiHan;
             hd_dto.GiaTriHopDong = hd.GiaTriHopDong;
             hd_dto.DieuKhoan = hd.DieuKhoan;
-            hd_dto.HieuLuc = hd.HieuLuc;       
+            hd_dto.HieuLuc = hd.HieuLuc;
+            hd_dto.TrangThai = hd.TrangThai;
             return hd_dto;
         }
     }

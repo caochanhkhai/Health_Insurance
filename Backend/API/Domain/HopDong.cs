@@ -23,5 +23,6 @@ namespace API.Domain
 
         public GoiBaoHiem GoiBaoHiem { get; set; }
         public int GoiBaoHiemID_GoiBaoHiem { get; set; }
+        public string? TrangThai {  get; set; }
     }
 }
