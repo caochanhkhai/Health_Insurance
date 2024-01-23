@@ -163,7 +163,7 @@ namespace API.Controllers
             {
                 ToEmail = KhachHangDomain.Email,
                 Subject = "Xác thực tài khoản Bảo hiểm sức khỏe VHI",
-                Body = $"<div>Để xác thực tài khoản của bạn trên trang web Bảo hiểm sức khỏe VHI, vui lòng click vào đường dẫn sau đây: <a href=\"https://localhost:8081/VerifyEmail?accessToken={accessToken}\">Link</a></div>"
+                Body = $"<div>Để xác thực tài khoản của bạn trên trang web Bảo hiểm sức khỏe VHI, vui lòng click vào đường dẫn sau đây: <a href=\"http://localhost:8081/VerifyEmail?accessToken={accessToken}\">Link</a></div>"
             };
             emailService.SendEmailAsync(mailrequest);
 
