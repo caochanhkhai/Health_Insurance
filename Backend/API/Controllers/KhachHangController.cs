@@ -65,21 +65,17 @@ namespace API.Controllers
                 return NotFound("Không tồn tại Tài khoản.");
             }
 
-            var dskh = VHIDbContext.KhachHang.Where(q => q.TaiKhoanID_TaiKhoan == idtk).ToList();
+            var kh = VHIDbContext.KhachHang.FirstOrDefault(q => q.TaiKhoanID_TaiKhoan == idtk);
 
-            if (dskh == null || dskh.Count() == 0)
+            if (kh == null)
             {
                 return NotFound("Không tìm thấy Tài khoản tương ứng với Khách hàng.");
             }
 
-            List<KhachHangDTO> dskhDTO = new List<KhachHangDTO>();
-            foreach (var kh in dskh)
-            {
-                KhachHangDTO kh_dto = CreateKHDTO(kh, kh.CongTyID_CongTy, kh.TaiKhoanID_TaiKhoan);
-                dskhDTO.Add(kh_dto);
-            }
+            KhachHangDTO kh_dto = CreateKHDTO(kh, kh.CongTyID_CongTy, kh.TaiKhoanID_TaiKhoan);
+               
 
-            return Ok(dskhDTO);
+            return Ok(kh_dto);
         }
 
         [HttpGet]
@@ -109,25 +105,6 @@ namespace API.Controllers
 
             return Ok(dskhDTO);
         }
-
-        //[HttpGet]
-        //[Route("idtk:int")]
-        //public IActionResult GetByIdtk(int idtk)
-        //{
-        //    var kh = VHIDbContext.KhachHang.FirstOrDefault(x => x.TaiKhoanID_TaiKhoan == idtk);
-        //    var tk = VHIDbContext.TaiKhoan.FirstOrDefault(x => x.ID_TaiKhoan == idtk);
-        //    if(tk == null)
-        //    {
-        //        return NotFound("Không tồn tại tài khoản");
-        //    }
-        //    if (kh == null)
-        //    {
-        //        return NotFound("Không tìm thấy khách hàng với tài khoản tương ứng");
-        //    }
-        //    KhachHangDTO kh_dto = CreateKHDTO(kh,kh.CongTyID_CongTy,kh.TaiKhoanID_TaiKhoan);
-
-        //    return Ok(kh_dto);
-        //}
 
         [HttpPost]
         [Route("ThemKhachHang")]
@@ -193,25 +170,66 @@ namespace API.Controllers
             return Ok(kh_dto);
         }
 
-        /*[HttpPost]
+        [HttpPost]
         [Route("UpdateThongTinCaNhanKhachHang(id)")]
-        public IActionResult UpdateKhachHang(int id, [FromBody] KhachHangDTO dto)
+        public IActionResult UpdateThongTinCaNhanKhachHang(int id, [FromBody] UpdateTTCNKhachHangDTO dto)
         {
             var khDomain = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == id);
             if (khDomain == null)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy Khách hàng.");
             }
-            if(khDomain.Email != dto.Email)
+            //Lấy ra danh sách khách hàng khác không phải là khách hàng đang cần cập nhật thông tin
+            var dskhKhac = VHIDbContext.KhachHang.Where(x=>x.ID_KhachHang != id).ToList();
+            foreach (var kh in dskhKhac)
             {
-                khDomain.XacThuc = "Chưa Xác Thực";
+                if (dto.CMND == kh.CMND)
+                {
+                    return BadRequest("CMND đã tồn tại!");
+                }
+                if (dto.SoTaiKhoan == kh.SoTaiKhoan)
+                {
+                    return BadRequest("Số Tài Khoản đã tồn tại!");
+                }
+                string sdt = kh.SoDienThoai.TrimEnd();
+                if (dto.SoDienThoai == sdt)
+                {
+                    return BadRequest("Số Điện Thoại đã tồn tại!");
+                }
             }
+
             UpdateKhachHangDomainByDTO(dto, khDomain);
 
             VHIDbContext.SaveChanges();
             KhachHangDTO kh_dto = CreateKHDTO(khDomain, khDomain.CongTyID_CongTy, khDomain.TaiKhoanID_TaiKhoan);
             return Ok(kh_dto);
-        }*/
+        }
+
+        [HttpPost]
+        [Route("UpdateEmailKhachHang(id)")]
+        public IActionResult UpdateEmailKhachHang(int id, string Email)
+        {
+            var khDomain = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == id);
+            if (khDomain == null)
+            {
+                return NotFound("Không tìm thấy Khách hàng.");
+            }
+            //Lấy ra danh sách khách hàng khác không phải là khách hàng đang cần cập nhật thông tin
+            var dskhKhac = VHIDbContext.KhachHang.Where(x => x.ID_KhachHang != id).ToList();
+            foreach (var kh in dskhKhac)
+            {
+                if (Email == kh.Email)
+                {
+                    return BadRequest("Email đã tồn tại!");
+                }
+            }
+            //Cập nhật lại Email cho Khách hàng
+            khDomain.Email = Email;
+
+            VHIDbContext.SaveChanges();
+            KhachHangDTO kh_dto = CreateKHDTO(khDomain, khDomain.CongTyID_CongTy, khDomain.TaiKhoanID_TaiKhoan);
+            return Ok(kh_dto);
+        }
 
         [HttpPost]
         [Route("UpdateCongTyKhachHang(idkh,idct)")]
@@ -337,7 +355,7 @@ namespace API.Controllers
                 };
             }
         }
-        private static void UpdateKhachHangDomainByDTO(KhachHangDTO dto, KhachHang? khDomain)
+        private static void UpdateKhachHangDomainByDTO(UpdateTTCNKhachHangDTO dto, KhachHang? khDomain)
         {
             khDomain.HoTen = dto.HoTen;
             khDomain.GioiTinh = dto.GioiTinh;
@@ -351,7 +369,6 @@ namespace API.Controllers
             khDomain.PhuongXa = dto.PhuongXa;
             khDomain.QuanHuyen = dto.QuanHuyen;
             khDomain.ThanhPho = dto.ThanhPho;
-            khDomain.Email = dto.Email;
             khDomain.CMND = dto.CMND;
             khDomain.NgheNghiep = dto.NgheNghiep;
             khDomain.ChiTietCongViec = dto.ChiTietCongViec;

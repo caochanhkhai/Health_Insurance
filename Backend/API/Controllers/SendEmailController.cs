@@ -39,5 +39,28 @@ namespace API.Controllers
             }
             return Ok();
         }
+
+        [HttpPost("SendNewEMailToChange")]
+        public async Task<IActionResult> SendNewEMail(int idKH, string Email)
+        {
+            var kh = VHIDbContext.KhachHang.FirstOrDefault(x => x.ID_KhachHang == idKH);
+            try
+            {
+                var jwtService = new JwtService("vhihealthinsurance");
+                var accessToken = jwtService.GenerateTokenToChangeEmail(idKH.ToString(), Email, 10);
+                Mailrequest mailrequest = new Mailrequest()
+                {
+                    ToEmail = Email,
+                    Subject = "Thay Đổi Email Của Bạn Trên Trang Web Bảo hiểm sức khỏe VHI",
+                    Body = $"<div>Để thay đổi Email của bạn trên trang web Bảo hiểm sức khỏe VHI, vui lòng click vào đường dẫn sau đây: <a href=\"https://localhost:8081/VerifyEmail?accessToken={accessToken}\">Link</a></div>"
+                };
+                await emailService.SendEmailAsync(mailrequest);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return Ok();
+        }
     }
 }
