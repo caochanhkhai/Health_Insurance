@@ -14,14 +14,14 @@ namespace API.MiddleWare
             _secretKey = secretKey;
         }
 
-        public string GenerateToken(string idtk, string tenDN, int expiresInMinutes = 10)
+        public string GenerateToken(string idKH, string tenDN, int expiresInMinutes = 10)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-            new Claim("idtk", idtk),
+            new Claim("idKH", idKH),
             new Claim("tenDN", tenDN)
             };
 
