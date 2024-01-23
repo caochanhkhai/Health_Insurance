@@ -53,5 +53,25 @@ namespace API.MiddleWare
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        public string GenerateTokenToChangeEmail(string idKH, string NewEmail, int expiresInMinutes = 10)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+            new Claim("idKH", idKH),
+            new Claim("NewEmail", NewEmail)
+            };
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(expiresInMinutes),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
 }
