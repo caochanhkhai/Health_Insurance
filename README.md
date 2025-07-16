@@ -5,6 +5,8 @@ Dự án Website **VHI Health Insurance** của **Nhóm 4**, phục vụ môn **
 
 Nhóm quản lý dự án theo mô hình **Scrum (Agile)**, dưới sự hướng dẫn của **thầy Phạm Minh Tú** và **cô Tiết Gia Hồng**.
 
+Repository front-end: https://github.com/nzerefdragneel/PTUD_FE
+
 ## Thành viên nhóm
 ### Scrum Master
 - Cao Chánh Khải
